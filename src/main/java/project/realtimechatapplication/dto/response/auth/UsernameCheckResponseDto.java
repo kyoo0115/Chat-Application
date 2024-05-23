@@ -4,7 +4,6 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.OK;
 
 import org.springframework.http.ResponseEntity;
-import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
 import project.realtimechatapplication.dto.response.ResponseDto;
 import project.realtimechatapplication.model.ResponseCode;
 import project.realtimechatapplication.model.ResponseMessage;
@@ -20,6 +19,4 @@ public class UsernameCheckResponseDto extends ResponseDto {
     ResponseDto responseBody = new ResponseDto(ResponseCode.DUPLICATE_ID, ResponseMessage.DUPLICATE_ID);
     return ResponseEntity.status(CONFLICT).body(responseBody);
   }
-
-
 }
