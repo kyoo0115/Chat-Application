@@ -1,2 +1,8 @@
-package project.realtimechatapplication.service;public class AuthService {
+package project.realtimechatapplication.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
 }

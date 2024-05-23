@@ -2,9 +2,9 @@ spring:
   profiles:
     active: prod
   application:
-    name: realtime-chat-app
+    name: realtime-chat-application
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     defer-datasource-initialization: true
     show-sql: true
