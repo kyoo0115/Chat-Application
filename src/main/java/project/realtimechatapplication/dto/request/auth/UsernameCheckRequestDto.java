@@ -1,8 +1,16 @@
 package project.realtimechatapplication.dto.request.auth;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-public class IdCheckRequestDto {
+@Setter
+@NoArgsConstructor
+public class UsernameCheckRequestDto {
+
+  @NotBlank
+  private String username;
 
 }
