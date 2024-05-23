@@ -8,3 +8,5 @@ spring:
       ddl-auto: update
     defer-datasource-initialization: true
     show-sql: true
+  jwt:
+    secret: ZGF5b25lLXNwcmluZy1ib290LWRpdmlkZW5kLXByb2plY3QtdHV0b3JpYWwtand0LXNlY3JldC1rZXkK
