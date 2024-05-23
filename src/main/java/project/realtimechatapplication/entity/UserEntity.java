@@ -42,6 +42,9 @@ public class UserEntity extends BaseEntity{
   @Column(nullable = false)
   private LocalDate birthDate;
 
+  @Column
+  private String role;
+
   @OneToMany(mappedBy = "user", cascade = ALL, fetch = LAZY)
   private List<MessageEntity> messages = new ArrayList<>();
 
