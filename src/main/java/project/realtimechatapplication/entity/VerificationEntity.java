@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 public class VerificationEntity extends BaseEntity {
 
   @Id
-  private long userId;
+  private long senderId;
   private String email;
-  private String certificationNumber;
+  private String verificationNumber;
 }
 
