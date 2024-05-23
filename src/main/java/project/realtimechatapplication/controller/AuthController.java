@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import project.realtimechatapplication.dto.request.auth.SignUpRequestDto;
 import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
-import project.realtimechatapplication.dto.response.auth.SignUpResponseDto;
 import project.realtimechatapplication.dto.response.auth.UsernameCheckResponseDto;
 import project.realtimechatapplication.service.AuthService;
 
