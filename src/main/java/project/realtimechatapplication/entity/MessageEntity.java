@@ -32,7 +32,7 @@ public class MessageEntity extends BaseEntity {
   private UserEntity user;
 
   @ManyToOne
-  @JoinColumn(name = "chatRoom_id", nullable = false)
+  @JoinColumn(name = "chat_room_id", nullable = false)
   private ChatRoomEntity chatRoom;
 
   @OneToMany(mappedBy = "parentMessage", cascade = ALL, fetch = LAZY)
