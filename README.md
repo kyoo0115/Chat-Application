@@ -36,7 +36,7 @@
     - 이메일을 통한 아이디 찾기 및 비밀번호 초기화 기능
 ### 회원 정보 수정
 - 수정 가능한 정보:
-    - 이름
+    - 사용자는 회원 이름만 수정할 수 있습니다. (채팅방에 표시될 이름)
 - 절차:
     - 기존 비밀번호 확인 후 새로운 정보 입력
 ### 회원 탈퇴
@@ -78,7 +78,7 @@
 
 ### 이벤트 기반 알림
 - 기능:
-    - 사용자 멘션, 메시지 반응, 새로운 메시지 등에 대한 실시간 알림
+    - 사용자 멘션, 메시지 반응, 새로운 메시지, 파일 업로드 등에 대한 실시간 알림
 
 ### 메시지 반응
 - 기능:
@@ -114,3 +114,10 @@
   <img src="https://img.shields.io/badge/mailgun-FF0000?style=for-the-badge&logo=mailgun&logoColor=white">
   <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white">
 </div>
+
+## Glossary
+- <b>멘션:</b> 다른 사용자를 언급하는 기능.
+- <b>리액션:</b> 메시지에 대한 이모지 반응.
+- <b>스레드:</b> 메시지에 대한 답글을 달 수 있는 기능.
+- <b>이벤트 기반 알림:</b> 특정 이벤트 발생 시 사용자에게 실시간으로 알림을 제공하는 기능.
+
