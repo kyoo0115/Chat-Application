@@ -15,7 +15,7 @@ import lombok.Setter;
 public class SignUpRequestDto {
 
   @NotBlank
-  private String userName;
+  private String username;
 
   @NotBlank
   private String name;
