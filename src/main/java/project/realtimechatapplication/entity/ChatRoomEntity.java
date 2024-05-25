@@ -30,7 +30,7 @@ public class ChatRoomEntity extends BaseEntity {
   private UserEntity user;
 
   @Column(nullable = false)
-  private Boolean isPrivate;
+  private boolean isPrivate;
 
   @OneToMany(mappedBy = "chatRoom", cascade = ALL, fetch = LAZY)
   private List<MessageEntity> messages = new ArrayList<>();
