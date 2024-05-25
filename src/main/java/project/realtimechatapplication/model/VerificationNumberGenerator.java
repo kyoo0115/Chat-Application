@@ -1,4 +1,4 @@
-package project.realtimechatapplication.util;
+package project.realtimechatapplication.model;
 
 public class VerificationNumberGenerator {
 
