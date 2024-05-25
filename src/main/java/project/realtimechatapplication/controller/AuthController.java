@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import project.realtimechatapplication.dto.request.auth.SendVerificationEmailRequestDto;
 import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
+import project.realtimechatapplication.dto.response.auth.SendVerificationEmailResponseDto;
 import project.realtimechatapplication.dto.response.auth.UsernameCheckResponseDto;
 import project.realtimechatapplication.service.AuthService;
 
@@ -25,5 +27,13 @@ public class AuthController {
   ) {
     authService.usernameCheck(dto);
     return UsernameCheckResponseDto.success();
+  }
+
+  @PostMapping("/send-verification-email")
+  public ResponseEntity<? super SendVerificationEmailResponseDto> sendVerificationEmail(
+      @RequestBody @Valid SendVerificationEmailRequestDto dto
+  ) {
+    authService.sendVerificationEmail(dto);
+    return SendVerificationEmailResponseDto.success();
   }
 }
