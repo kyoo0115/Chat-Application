@@ -1,7 +1,9 @@
 package project.realtimechatapplication.service;
 
+import org.springframework.http.ResponseEntity;
 import project.realtimechatapplication.dto.request.auth.SendVerificationEmailRequestDto;
 import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
+import project.realtimechatapplication.dto.response.auth.UsernameCheckResponseDto;
 
 public interface AuthService {
 

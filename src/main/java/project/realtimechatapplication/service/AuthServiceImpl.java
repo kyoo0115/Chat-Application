@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 import project.realtimechatapplication.dto.request.auth.SendVerificationEmailRequestDto;
 import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
 import project.realtimechatapplication.entity.VerificationEntity;
-import project.realtimechatapplication.model.VerificationNumberGenerator;
 import project.realtimechatapplication.provider.EmailProvider;
 import project.realtimechatapplication.repository.UserRepository;
 import project.realtimechatapplication.repository.VerificationRepository;
+import project.realtimechatapplication.model.VerificationNumberGenerator;
 
 @Service
 @RequiredArgsConstructor
