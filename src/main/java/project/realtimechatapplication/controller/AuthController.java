@@ -21,8 +21,9 @@ public class AuthController {
 
   @PostMapping("/username-check")
   public ResponseEntity<? super UsernameCheckResponseDto> usernameCheck(
-      @RequestBody @Valid UsernameCheckRequestDto requestBody
+      @RequestBody @Valid UsernameCheckRequestDto dto
   ) {
-    return authService.usernameCheck(requestBody);
+    authService.usernameCheck(dto);
+    return UsernameCheckResponseDto.success();
   }
 }
