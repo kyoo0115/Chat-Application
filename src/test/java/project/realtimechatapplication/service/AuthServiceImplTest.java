@@ -1,26 +1,40 @@
 package project.realtimechatapplication.service;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.any;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import project.realtimechatapplication.dto.request.auth.SendVerificationEmailRequestDto;
 import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
-import project.realtimechatapplication.dto.response.auth.UsernameCheckResponseDto;
-import project.realtimechatapplication.model.ResponseCode;
-import project.realtimechatapplication.model.ResponseMessage;
+import project.realtimechatapplication.entity.UserEntity;
+import project.realtimechatapplication.entity.VerificationEntity;
+import project.realtimechatapplication.provider.EmailProvider;
 import project.realtimechatapplication.repository.UserRepository;
+import project.realtimechatapplication.repository.VerificationRepository;
 
 public class AuthServiceImplTest {
 
   @Mock
   private UserRepository userRepository;
+
+  @Mock
+  private VerificationRepository verificationRepository;
+
+  @Mock
+  private EmailProvider emailProvider;
 
   @InjectMocks
   private AuthServiceImpl authService;
@@ -35,14 +49,13 @@ public class AuthServiceImplTest {
     // Arrange
     UsernameCheckRequestDto requestDto = new UsernameCheckRequestDto();
     requestDto.setUsername("existingUser");
-    when(userRepository.existsByUsername(anyString())).thenReturn(true);
+    when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(new UserEntity()));
 
-    // Act
-    authService.usernameCheck(requestDto);
-
-    // Assert
-    assertEquals();
-
+    // Act & Assert
+    RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+      authService.usernameCheck(requestDto);
+    });
+    assertEquals("User already exists.", exception.getMessage());
   }
 
   @Test
@@ -50,15 +63,12 @@ public class AuthServiceImplTest {
     // Arrange
     UsernameCheckRequestDto requestDto = new UsernameCheckRequestDto();
     requestDto.setUsername("newUser");
-    when(userRepository.existsByUsername(anyString())).thenReturn(false);
+    when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
-    // Act
-    ResponseEntity<? super UsernameCheckResponseDto> response = authService.usernameCheck(requestDto);
-
-    // Assert
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals("Success.", ResponseMessage.SUCCESS);
-    assertEquals("SU", ResponseCode.SUCCESS);
+    // Act & Assert
+    assertDoesNotThrow(() -> {
+      authService.usernameCheck(requestDto);
+    });
   }
 
   @Test
@@ -66,14 +76,81 @@ public class AuthServiceImplTest {
     // Arrange
     UsernameCheckRequestDto requestDto = new UsernameCheckRequestDto();
     requestDto.setUsername("anyUser");
-    when(userRepository.existsByUsername(anyString())).thenThrow(new RuntimeException("Database error"));
+    when(userRepository.findByUsername(anyString())).thenThrow(new RuntimeException("Database error"));
+
+    // Act & Assert
+    RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+      authService.usernameCheck(requestDto);
+    });
+    assertEquals("Database error", exception.getMessage());
+  }
+
+
+  @Test
+  public void testSendVerificationEmail_UserExists() {
+    // Arrange
+    SendVerificationEmailRequestDto requestDto = new SendVerificationEmailRequestDto();
+    requestDto.setUsername("existingUser");
+    requestDto.setEmail("user@example.com");
+    when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(new UserEntity()));
+
+    // Act & Assert
+    RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+      authService.sendVerificationEmail(requestDto);
+    });
+    assertEquals("User already exists.", exception.getMessage());
+  }
+
+  @Test
+  public void testSendVerificationEmail_EmailExists() {
+    // Arrange
+    SendVerificationEmailRequestDto requestDto = new SendVerificationEmailRequestDto();
+    requestDto.setUsername("newUser");
+    requestDto.setEmail("existing@example.com");
+    when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+    when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(new UserEntity()));
+
+    // Act & Assert
+    RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+      authService.sendVerificationEmail(requestDto);
+    });
+    assertEquals("Email already exists.", exception.getMessage());
+  }
+
+  @Test
+  public void testSendVerificationEmail_EmailSendFailure() {
+    // Arrange
+    SendVerificationEmailRequestDto requestDto = new SendVerificationEmailRequestDto();
+    requestDto.setUsername("newUser");
+    requestDto.setEmail("newuser@example.com");
+    when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+    when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+    when(emailProvider.sendVerificationEmail(anyString(), anyString())).thenReturn(false);
+
+    // Act & Assert
+    RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+      authService.sendVerificationEmail(requestDto);
+    });
+    assertEquals("Email send failure.", exception.getMessage());
+  }
+
+  @Test
+  public void testSendVerificationEmail_Success() {
+    // Arrange
+    SendVerificationEmailRequestDto requestDto = new SendVerificationEmailRequestDto();
+    requestDto.setUsername("newUser");
+    requestDto.setEmail("newuser@example.com");
+    when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+    when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+    when(emailProvider.sendVerificationEmail(anyString(), anyString())).thenReturn(true);
 
     // Act
-    ResponseEntity<? super UsernameCheckResponseDto> response = authService.usernameCheck(requestDto);
+    authService.sendVerificationEmail(requestDto);
 
     // Assert
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    assertEquals("Database error.", ResponseMessage.DATABASE_ERROR);
-    assertEquals("DBE", ResponseCode.DATABASE_ERROR);
+    verify(userRepository, times(1)).findByUsername(anyString());
+    verify(userRepository, times(1)).findByEmail(anyString());
+    verify(emailProvider, times(1)).sendVerificationEmail(anyString(), anyString());
+    verify(verificationRepository, times(1)).save(ArgumentMatchers.any(VerificationEntity.class));
   }
 }
