@@ -46,9 +46,6 @@ public class UserEntity extends BaseEntity{
   private String role;
 
   @OneToMany(mappedBy = "user", cascade = ALL, fetch = LAZY)
-  private List<MessageEntity> messages = new ArrayList<>();
-
-  @OneToMany(mappedBy = "user", cascade = ALL, fetch = LAZY)
   private List<NotificationEntity> notifications = new ArrayList<>();
 
   @OneToMany(mappedBy = "user", cascade = ALL, fetch = LAZY)
