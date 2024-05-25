@@ -1,5 +1,6 @@
 package project.realtimechatapplication.repository;
 
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import project.realtimechatapplication.entity.UserEntity;
@@ -9,5 +10,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
   boolean existsByUsername(String username);
 
-  UserEntity findByUsername(String username);
+  Optional<UserEntity> findByUsername(String username);
 }
