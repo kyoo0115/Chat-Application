@@ -3,6 +3,7 @@ package project.realtimechatapplication.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import project.realtimechatapplication.dto.request.auth.CheckVerificationRequestDto;
 import project.realtimechatapplication.dto.request.auth.SendVerificationEmailRequestDto;
 import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
 import project.realtimechatapplication.entity.VerificationEntity;
@@ -52,5 +53,24 @@ public class AuthServiceImpl implements AuthService {
 
     VerificationEntity verificationEntity = VerificationEntity.of(dto.getUsername(), dto.getEmail(), verificationNumber);
     verificationRepository.save(verificationEntity);
+  }
+
+  @Override
+  public void checkVerification(CheckVerificationRequestDto dto) {
+
+    String username = dto.getUsername();
+    String email = dto.getEmail();
+    String verificationNumber = dto.getVerificationNumber();
+
+    VerificationEntity verificationEntity = verificationRepository.findByUsername(username)
+        .orElseThrow(() -> new RuntimeException("User not found."));
+
+    if(!email.equals(verificationEntity.getEmail())) {
+      throw new RuntimeException("Email is not matched.");
+    }
+
+    if(!verificationNumber.equals(verificationEntity.getVerificationNumber())) {
+      throw new RuntimeException("Verification number is not matched.");
+    }
   }
 }
