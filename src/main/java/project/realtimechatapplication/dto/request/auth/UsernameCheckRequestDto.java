@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UsernameCheckRequestDto {
 
-  @NotBlank
+  @NotBlank(message = "Invalid username: empty name")
   private String username;
 
 }
