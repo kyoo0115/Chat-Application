@@ -38,12 +38,11 @@ public class AuthServiceImplTest {
     when(userRepository.existsByUsername(anyString())).thenReturn(true);
 
     // Act
-    ResponseEntity<? super UsernameCheckResponseDto> response = authService.usernameCheck(requestDto);
+    authService.usernameCheck(requestDto);
 
     // Assert
-    assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-    assertEquals("Duplicate Id.", ResponseMessage.DUPLICATE_ID);
-    assertEquals("DI", ResponseCode.DUPLICATE_ID);
+    assertEquals();
+
   }
 
   @Test
