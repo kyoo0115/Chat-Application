@@ -6,5 +6,5 @@ import project.realtimechatapplication.dto.response.auth.UsernameCheckResponseDt
 
 public interface AuthService {
 
-  ResponseEntity<? super UsernameCheckResponseDto> usernameCheck(UsernameCheckRequestDto dto);
+  void usernameCheck(UsernameCheckRequestDto dto);
 }

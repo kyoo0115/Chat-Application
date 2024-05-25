@@ -16,15 +16,11 @@ public class AuthServiceImpl implements AuthService {
   private final UserRepository userRepository;
 
   @Override
-  public ResponseEntity<? super UsernameCheckResponseDto> usernameCheck(UsernameCheckRequestDto dto) {
-    try {
-      String username = dto.getUsername();
-      boolean isExist = userRepository.existsByUsername(username);
-      if(isExist) return UsernameCheckResponseDto.duplicateUsername();
+  public void usernameCheck(UsernameCheckRequestDto dto) {
 
-    } catch (Exception e) {
-      return UsernameCheckResponseDto.databaseError();
-    }
-    return UsernameCheckResponseDto.success();
+    userRepository.findByUsername(dto.getUsername())
+        .ifPresent(user -> {
+          throw new RuntimeException("이미 존재하는 사용자 이름입니다.");
+        });
   }
 }
