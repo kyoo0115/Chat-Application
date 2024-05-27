@@ -8,9 +8,6 @@ import project.realtimechatapplication.entity.UserEntity;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-  boolean existsByUsername(String username);
-
   Optional<UserEntity> findByUsername(String username);
-
   Optional<Object> findByEmail(String email);
 }
