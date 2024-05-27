@@ -26,7 +26,7 @@ public class AuthController {
   private final AuthService authService;
 
   @PostMapping("/username-check")
-  public ResponseEntity<? super UsernameCheckResponseDto> usernameCheck(
+  public ResponseEntity<?> usernameCheck(
       @RequestBody @Valid UsernameCheckRequestDto dto
   ) {
     authService.usernameCheck(dto);
@@ -34,7 +34,7 @@ public class AuthController {
   }
 
   @PostMapping("/send-verification-email")
-  public ResponseEntity<? super SendVerificationEmailResponseDto> sendVerificationEmail(
+  public ResponseEntity<?> sendVerificationEmail(
       @RequestBody @Valid SendVerificationEmailRequestDto dto
   ) {
     authService.sendVerificationEmail(dto);
@@ -42,7 +42,7 @@ public class AuthController {
   }
 
   @PostMapping("/check-verification-email")
-  public ResponseEntity<? super CheckVerificationResponseDto> checkVerification(
+  public ResponseEntity<?> checkVerification(
       @RequestBody @Valid CheckVerificationRequestDto dto
   ) {
     authService.checkVerification(dto);
@@ -50,7 +50,7 @@ public class AuthController {
   }
 
   @PostMapping("/sign-up")
-  public ResponseEntity<? super SignUpResponseDto> signUp(
+  public ResponseEntity<?> signUp(
       @RequestBody @Valid SignUpRequestDto dto
   ) {
     authService.signUp(dto);
