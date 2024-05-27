@@ -12,6 +12,6 @@ public class EmailSendErrorException extends AbstractException {
 
   @Override
   public String getMessage() {
-    return "Email send error.";
+    return "Email send failure.";
   }
 }
