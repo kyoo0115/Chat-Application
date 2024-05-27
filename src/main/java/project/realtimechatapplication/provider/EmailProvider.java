@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import project.realtimechatapplication.exception.impl.EmailSendErrorException;
 
 @Component
 @RequiredArgsConstructor
@@ -16,7 +17,7 @@ public class EmailProvider {
     private final JavaMailSender javaMailSender;
     private final String SUBJECT = "[Chat-Connect] 인증 매일입니다.";
 
-    public boolean sendVerificationEmail(String email, String verificationNumber) {
+    public void sendVerificationEmail(String email, String verificationNumber) {
       try{
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
@@ -30,9 +31,8 @@ public class EmailProvider {
 
       } catch (MessagingException e) {
         log.error("Email 전송 실패 {}", e.getMessage());
-        return false;
+        throw new EmailSendErrorException();
       }
-      return true;
     }
 
     private String getVerificationMessage(String verificationNumber) {
