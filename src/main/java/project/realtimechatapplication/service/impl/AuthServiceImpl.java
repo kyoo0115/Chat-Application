@@ -48,9 +48,7 @@ public class AuthServiceImpl implements AuthService {
     validateEmailNotExists(dto.getEmail());
 
     String verificationNumber = VerificationNumberGenerator.generateVerificationNumber();
-    boolean sendMail = emailProvider.sendVerificationEmail(dto.getEmail(), (verificationNumber));
-
-    if (!sendMail) throw new EmailSendErrorException();
+    emailProvider.sendVerificationEmail(dto.getEmail(), (verificationNumber));
 
     VerificationEntity verificationEntity = VerificationEntity.of(dto, verificationNumber);
     verificationRepository.save(verificationEntity);
