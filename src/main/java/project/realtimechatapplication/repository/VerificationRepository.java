@@ -12,4 +12,6 @@ public interface VerificationRepository extends JpaRepository<VerificationEntity
   Optional<VerificationEntity> findByUsernameAndEmail(String username, String email);
 
   Optional<VerificationEntity> findByUsername(String username);
+
+  void deleteByUsername(String username);
 }
