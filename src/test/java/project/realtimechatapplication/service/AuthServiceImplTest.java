@@ -1,6 +1,5 @@
 package project.realtimechatapplication.service;
 
-import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import project.realtimechatapplication.dto.request.auth.SendVerificationEmailRequestDto;
 import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
@@ -24,6 +22,7 @@ import project.realtimechatapplication.entity.VerificationEntity;
 import project.realtimechatapplication.provider.EmailProvider;
 import project.realtimechatapplication.repository.UserRepository;
 import project.realtimechatapplication.repository.VerificationRepository;
+import project.realtimechatapplication.service.impl.AuthServiceImpl;
 
 public class AuthServiceImplTest {
 
