@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.realtimechatapplication.dto.request.auth.CheckVerificationRequestDto;
 import project.realtimechatapplication.dto.request.auth.SendVerificationEmailRequestDto;
+import project.realtimechatapplication.dto.request.auth.SignUpRequestDto;
 import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
 import project.realtimechatapplication.dto.response.auth.CheckVerificationResponseDto;
 import project.realtimechatapplication.dto.response.auth.SendVerificationEmailResponseDto;
+import project.realtimechatapplication.dto.response.auth.SignUpResponseDto;
 import project.realtimechatapplication.dto.response.auth.UsernameCheckResponseDto;
 import project.realtimechatapplication.service.AuthService;
 
@@ -45,5 +47,13 @@ public class AuthController {
   ) {
     authService.checkVerification(dto);
     return CheckVerificationResponseDto.success();
+  }
+
+  @PostMapping("/sign-up")
+  public ResponseEntity<? super SignUpResponseDto> signUp(
+      @RequestBody @Valid SignUpRequestDto dto
+  ) {
+    authService.signUp(dto);
+    return SignUpResponseDto.success();
   }
 }

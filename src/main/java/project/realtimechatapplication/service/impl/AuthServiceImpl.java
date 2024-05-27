@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import project.realtimechatapplication.dto.request.auth.CheckVerificationRequestDto;
 import project.realtimechatapplication.dto.request.auth.SendVerificationEmailRequestDto;
+import project.realtimechatapplication.dto.request.auth.SignUpRequestDto;
 import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
+import project.realtimechatapplication.entity.UserEntity;
 import project.realtimechatapplication.entity.VerificationEntity;
 import project.realtimechatapplication.provider.EmailProvider;
 import project.realtimechatapplication.repository.UserRepository;
@@ -25,24 +27,14 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public void usernameCheck(UsernameCheckRequestDto dto) {
 
-    userRepository.findByUsername(dto.getUsername())
-        .ifPresent(user -> {
-          throw new RuntimeException("User already exists.");
-        });
+    validateUsernameNotExists(dto.getUsername());
   }
 
   @Override
   public void sendVerificationEmail(SendVerificationEmailRequestDto dto) {
 
-    userRepository.findByUsername(dto.getUsername())
-        .ifPresent(user -> {
-          throw new RuntimeException("User already exists.");
-        });
-
-    userRepository.findByEmail(dto.getEmail())
-        .ifPresent(user -> {
-          throw new RuntimeException("Email already exists.");
-        });
+    validateUsernameNotExists(dto.getUsername());
+    validateEmailNotExists(dto.getEmail());
 
     String verificationNumber = VerificationNumberGenerator.generateVerificationNumber();
     boolean sendMail = emailProvider.sendVerificationEmail(dto.getEmail(), (verificationNumber));
@@ -51,17 +43,41 @@ public class AuthServiceImpl implements AuthService {
       throw new RuntimeException("Email send failure.");
     }
 
-    VerificationEntity verificationEntity = VerificationEntity.of(dto.getUsername(), dto.getEmail(), verificationNumber);
+    VerificationEntity verificationEntity = VerificationEntity.of(dto, verificationNumber);
     verificationRepository.save(verificationEntity);
   }
 
   @Override
   public void checkVerification(CheckVerificationRequestDto dto) {
+    validateVerification(dto.getUsername(), dto.getEmail(), dto.getVerificationNumber());
+  }
 
-    String username = dto.getUsername();
-    String email = dto.getEmail();
-    String verificationNumber = dto.getVerificationNumber();
+  @Override
+  public void signUp(SignUpRequestDto dto) {
 
+    validateUsernameNotExists(dto.getUsername());
+    validateEmailNotExists(dto.getEmail());
+    validateVerification(dto.getUsername(), dto.getEmail(), dto.getVerificationNumber());
+
+    UserEntity userEntity = UserEntity.of(dto);
+    userRepository.save(userEntity);
+  }
+
+  private void validateUsernameNotExists(String username) {
+    userRepository.findByUsername(username)
+        .ifPresent(user -> {
+          throw new RuntimeException("User already exists.");
+        });
+  }
+
+  private void validateEmailNotExists(String email) {
+    userRepository.findByEmail(email)
+        .ifPresent(user -> {
+          throw new RuntimeException("Email already exists.");
+        });
+  }
+
+  private void validateVerification(String username, String email, String verificationNumber) {
     VerificationEntity verificationEntity = verificationRepository.findByUsername(username)
         .orElseThrow(() -> new RuntimeException("User not found."));
 
