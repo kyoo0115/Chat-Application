@@ -5,14 +5,14 @@ import static org.springframework.http.HttpStatus.OK;
 import org.springframework.http.ResponseEntity;
 import project.realtimechatapplication.dto.response.ResponseDto;
 
-public class SignUpResponseDto extends ResponseDto {
+public class SendVerificationEmailResponseDto extends ResponseDto {
 
-  private SignUpResponseDto() {
+  private SendVerificationEmailResponseDto() {
     super();
   }
 
-  public static ResponseEntity<SignUpResponseDto> success() {
-    SignUpResponseDto responseBody = new SignUpResponseDto();
+  public static ResponseEntity<? super SendVerificationEmailResponseDto> success() {
+    SendVerificationEmailResponseDto responseBody = new SendVerificationEmailResponseDto();
     return ResponseEntity.status(OK).body(responseBody);
   }
 }

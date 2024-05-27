@@ -14,13 +14,20 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import project.realtimechatapplication.dto.request.auth.SignUpRequestDto;
 
 @Table(name = "user")
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class UserEntity extends BaseEntity{
   @Id
   @GeneratedValue(strategy = IDENTITY)
@@ -51,4 +58,14 @@ public class UserEntity extends BaseEntity{
   @OneToMany(mappedBy = "user", cascade = ALL, fetch = LAZY)
   private List<ChatRoomEntity> chatRooms = new ArrayList<>();
 
+  public static UserEntity of(SignUpRequestDto dto) {
+    return UserEntity.builder()
+        .username(dto.getUsername())
+        .email(dto.getEmail())
+        .name(dto.getName())
+        .password(dto.getPassword())
+        .birthDate(dto.getBirthDate())
+        .role("USER")
+        .build();
+  }
 }

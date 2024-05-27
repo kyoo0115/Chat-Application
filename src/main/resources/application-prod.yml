@@ -4,3 +4,15 @@ spring:
     url: jdbc:mariadb://localhost:3306/realtime-chat
     username: root
     password: admin
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: kyoominmir41@gmail.com
+    password: aekh ytcs gyig uldg
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
