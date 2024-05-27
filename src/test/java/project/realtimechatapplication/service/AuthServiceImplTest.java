@@ -1,5 +1,15 @@
 package project.realtimechatapplication.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -8,21 +18,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import project.realtimechatapplication.dto.request.auth.*;
+import project.realtimechatapplication.dto.request.auth.CheckVerificationRequestDto;
+import project.realtimechatapplication.dto.request.auth.SendVerificationEmailRequestDto;
+import project.realtimechatapplication.dto.request.auth.SignUpRequestDto;
+import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
 import project.realtimechatapplication.entity.UserEntity;
 import project.realtimechatapplication.entity.VerificationEntity;
-import project.realtimechatapplication.exception.impl.*;
+import project.realtimechatapplication.exception.impl.EmailAlreadyExistsException;
+import project.realtimechatapplication.exception.impl.EmailNotMatchedException;
+import project.realtimechatapplication.exception.impl.EmailSendErrorException;
+import project.realtimechatapplication.exception.impl.UserNotFoundException;
+import project.realtimechatapplication.exception.impl.UsernameAlreadyExistsException;
+import project.realtimechatapplication.exception.impl.VerificationNumberNotMatchedException;
 import project.realtimechatapplication.provider.EmailProvider;
 import project.realtimechatapplication.repository.UserRepository;
 import project.realtimechatapplication.repository.VerificationRepository;
-
-import java.util.Optional;
 import project.realtimechatapplication.service.impl.AuthServiceImpl;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 
 public class AuthServiceImplTest {
 

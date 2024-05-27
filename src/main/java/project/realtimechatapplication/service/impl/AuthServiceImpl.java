@@ -13,14 +13,13 @@ import project.realtimechatapplication.entity.UserEntity;
 import project.realtimechatapplication.entity.VerificationEntity;
 import project.realtimechatapplication.exception.impl.EmailAlreadyExistsException;
 import project.realtimechatapplication.exception.impl.EmailNotMatchedException;
-import project.realtimechatapplication.exception.impl.EmailSendErrorException;
 import project.realtimechatapplication.exception.impl.UserNotFoundException;
 import project.realtimechatapplication.exception.impl.UsernameAlreadyExistsException;
 import project.realtimechatapplication.exception.impl.VerificationNumberNotMatchedException;
+import project.realtimechatapplication.model.VerificationNumberGenerator;
 import project.realtimechatapplication.provider.EmailProvider;
 import project.realtimechatapplication.repository.UserRepository;
 import project.realtimechatapplication.repository.VerificationRepository;
-import project.realtimechatapplication.model.VerificationNumberGenerator;
 import project.realtimechatapplication.service.AuthService;
 
 @Service
