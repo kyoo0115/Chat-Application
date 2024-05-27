@@ -11,10 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SendVerificationEmailRequestDto {
 
-  @NotBlank(message = "Invalid username: empty name")
+  @NotBlank(message = "Username cannot be blank.")
   private String username;
 
-  @NotBlank(message = "Invalid email: empty name")
-  @Email(message = "Invalid email format")
+  @NotBlank(message = "Email cannot be blank.")
+  @Email(message = "Invalid email format.")
   private String email;
 }
