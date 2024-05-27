@@ -12,14 +12,14 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 public class CheckVerificationRequestDto {
 
-  @NotBlank(message = "Invalid username: empty name")
+  @NotBlank(message = "Username cannot be blank.")
   private String username;
 
-  @NotBlank(message = "Invalid email: empty name")
+  @NotBlank(message = "Email cannot be blank.")
   @Email(message = "Invalid email format")
   private String email;
 
-  @NotBlank(message = "Invalid verification number: empty name")
+  @NotBlank(message = "Verification number cannot be blank.")
   @Length(min = 4, max = 4, message = "Invalid verification number: length should be 4")
   private String verificationNumber;
 }
