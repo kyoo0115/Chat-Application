@@ -7,11 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.realtimechatapplication.dto.request.auth.SendVerificationEmailRequestDto;
 
 @Entity(name = "verification")
 @Table(name = "verification")
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
