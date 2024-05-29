@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import project.realtimechatapplication.entity.UserEntity;
+import project.realtimechatapplication.provider.TokenProvider;
 import project.realtimechatapplication.repository.UserRepository;
 
 @Component
@@ -51,9 +52,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            UserEntity user = userRepository.findByUsername(username).orElse(null);
+            UserEntity user = userRepository.findByUsername(username).orElseThrow();
             String role = user.getRole();
-
+            log.info("role: {}", role);
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority(role));
 
@@ -68,6 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         } catch (Exception e) {
             log.error("Error on authorization: {}", e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
         filterChain.doFilter(request, response);
     }
