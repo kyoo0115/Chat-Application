@@ -1,4 +1,4 @@
-package project.realtimechatapplication.security;
+package project.realtimechatapplication.provider;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -17,7 +17,7 @@ public class TokenProvider {
     @Value("${spring.jwt.secret}")
     private String secretKey;
 
-    public String create (String userId) {
+    public String createToken(String userId) {
         Date expiredDate = Date.from(Instant.now().plus(1, ChronoUnit.HOURS));
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 
@@ -29,7 +29,6 @@ public class TokenProvider {
     }
 
     public String validate (String jwt) {
-
         String subject;
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         try {
