@@ -14,10 +14,12 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Table(name = "chatRoom")
 @Entity
 @Getter
+@NoArgsConstructor
 public class ChatRoomEntity extends BaseEntity {
   @Id
   @GeneratedValue(strategy = IDENTITY)

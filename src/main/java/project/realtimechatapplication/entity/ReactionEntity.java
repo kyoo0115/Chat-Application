@@ -12,14 +12,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.realtimechatapplication.model.type.Reaction;
-
 
 @Table(name = "reaction")
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class ReactionEntity extends BaseEntity {
   @Id
   @GeneratedValue(strategy = IDENTITY)

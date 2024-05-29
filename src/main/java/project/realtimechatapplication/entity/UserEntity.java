@@ -34,13 +34,13 @@ public class UserEntity extends BaseEntity{
   private Long id;
 
   @Column(unique = true, nullable = false)
-  private String username; //로그인 아이디
+  private String username;
 
   @Column(unique = true, nullable = false)
-  private String email; //이메일 인증을 위해 동작
+  private String email;
 
   @Column(nullable = false)
-  private String name; //채팅에 보여줄 닉네임
+  private String name;
 
   @Column(nullable = false)
   private String password;
@@ -65,7 +65,7 @@ public class UserEntity extends BaseEntity{
         .name(dto.getName())
         .password(dto.getPassword())
         .birthDate(dto.getBirthDate())
-        .role("USER")
+        .role("ROLE_USER")
         .build();
   }
 }

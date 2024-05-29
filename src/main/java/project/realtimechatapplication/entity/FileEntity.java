@@ -11,12 +11,14 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Table(name = "file")
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class FileEntity extends BaseEntity {
   @Id
   @GeneratedValue(strategy = IDENTITY)

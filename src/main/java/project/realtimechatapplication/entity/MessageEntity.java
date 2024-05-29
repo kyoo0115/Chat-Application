@@ -15,10 +15,12 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Table(name = "message")
 @Entity
 @Getter
+@NoArgsConstructor
 public class MessageEntity extends BaseEntity {
   @Id
   @GeneratedValue(strategy = IDENTITY)
