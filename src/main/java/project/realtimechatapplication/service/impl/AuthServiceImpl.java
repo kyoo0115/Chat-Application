@@ -2,13 +2,16 @@ package project.realtimechatapplication.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.realtimechatapplication.dto.request.auth.CheckVerificationRequestDto;
 import project.realtimechatapplication.dto.request.auth.SendVerificationEmailRequestDto;
+import project.realtimechatapplication.dto.request.auth.SignInRequestDto;
 import project.realtimechatapplication.dto.request.auth.SignUpRequestDto;
 import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
+import project.realtimechatapplication.dto.response.auth.SignInResponseDto;
 import project.realtimechatapplication.entity.UserEntity;
 import project.realtimechatapplication.entity.VerificationEntity;
 import project.realtimechatapplication.exception.impl.EmailAlreadyExistsException;
@@ -16,10 +19,12 @@ import project.realtimechatapplication.exception.impl.EmailNotMatchedException;
 import project.realtimechatapplication.exception.impl.UserNotFoundException;
 import project.realtimechatapplication.exception.impl.UsernameAlreadyExistsException;
 import project.realtimechatapplication.exception.impl.VerificationNumberNotMatchedException;
+import project.realtimechatapplication.exception.impl.WrongPasswordException;
 import project.realtimechatapplication.model.VerificationNumberGenerator;
 import project.realtimechatapplication.provider.EmailProvider;
 import project.realtimechatapplication.repository.UserRepository;
 import project.realtimechatapplication.repository.VerificationRepository;
+import project.realtimechatapplication.provider.TokenProvider;
 import project.realtimechatapplication.service.AuthService;
 
 @Service
@@ -34,6 +39,8 @@ public class AuthServiceImpl implements AuthService {
 
   private final PasswordEncoder passwordEncoder;
 
+  private final TokenProvider tokenProvider;
+
   @Override
   public void usernameCheck(UsernameCheckRequestDto dto) {
 
@@ -41,6 +48,7 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
+  @Transactional
   public void sendVerificationEmail(SendVerificationEmailRequestDto dto) {
 
     validateUsernameNotExists(dto.getUsername());
@@ -66,7 +74,6 @@ public class AuthServiceImpl implements AuthService {
     validateEmailNotExists(dto.getEmail());
     validateVerification(dto.getUsername(), dto.getEmail(), dto.getVerificationNumber());
 
-
     String password = dto.getPassword();
     String encodedPassword = passwordEncoder.encode(password);
     dto.setPassword(encodedPassword);
@@ -75,6 +82,24 @@ public class AuthServiceImpl implements AuthService {
 
     verificationRepository.deleteByUsername(userEntity.getUsername());
     userRepository.save(userEntity);
+  }
+
+  @Override
+  public ResponseEntity<SignInResponseDto> signIn(SignInRequestDto dto) {
+
+    UserEntity user = userRepository.findByUsername(dto.getUsername())
+        .orElseThrow(UserNotFoundException::new);
+
+    String password = dto.getPassword();
+    String encodedPassword = user.getPassword();
+
+    if(!passwordEncoder.matches(password, encodedPassword)) {
+      throw new WrongPasswordException();
+    }
+
+    String token = tokenProvider.createToken(user.getUsername());
+
+    return SignInResponseDto.authenticate(token);
   }
 
   private void validateUsernameNotExists(String username) {
