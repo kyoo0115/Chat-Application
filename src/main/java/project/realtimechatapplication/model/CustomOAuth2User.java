@@ -1,4 +1,4 @@
-package project.realtimechatapplication.entity;
+package project.realtimechatapplication.model;
 
 import java.util.Collection;
 import java.util.Map;
