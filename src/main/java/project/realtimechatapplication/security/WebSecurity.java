@@ -3,6 +3,7 @@ package project.realtimechatapplication.security;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -46,9 +47,9 @@ public class WebSecurity {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         )
         .authorizeHttpRequests(request -> request
-            .requestMatchers("/", "/auth/**", "/auth/oauth2/**").permitAll()
+            .requestMatchers("/", "/auth/**", "/auth/oauth2/**", "/ws/chat/**", "/index.html", "app.js").permitAll()
+                .requestMatchers("/**").permitAll()
             .requestMatchers("/user/**").hasRole("USER")
-            .requestMatchers("/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated()
         )
         .oauth2Login(oauth2 -> oauth2
@@ -68,9 +69,9 @@ public class WebSecurity {
   protected CorsConfigurationSource corsConfigurationSource() {
 
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.addAllowedOrigin("*");
-    configuration.addAllowedMethod("*");
-    configuration.addAllowedHeader("*");
+    configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedOrigins(List.of("*"));
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
