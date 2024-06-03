@@ -1,15 +1,11 @@
-package project.realtimechatapplication.dto.request.auth;
+package project.realtimechatapplication.dto.request.chat;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class MessageSendRequestDto {
-
-  @NotBlank
-  private String senderId;
-  @NotBlank
-  private String receiverId;
-  @NotBlank
   private String message;
+  private String senderId;
 }

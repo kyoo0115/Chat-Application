@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ChatRoomCreateRequest {
+public class ChatRoomCreateRequestDto {
   private String roomName;
 }

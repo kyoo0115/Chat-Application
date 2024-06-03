@@ -16,14 +16,18 @@ public class SignInResponseDto extends ResponseDto {
   @JsonProperty("expirationTime")
   private final int expirationTime;
 
-  private SignInResponseDto(String token) {
+  @JsonProperty("username")
+  private final String username;
+
+  private SignInResponseDto(String token, String username) {
     super();
     this.token = token;
     this.expirationTime = 3600;
+    this.username = username;
   }
 
-  public static ResponseEntity<SignInResponseDto> authenticate(String token) {
-    SignInResponseDto responseBody = new SignInResponseDto(token);
+  public static ResponseEntity<SignInResponseDto> authenticate(String token, String username) {
+    SignInResponseDto responseBody = new SignInResponseDto(token, username);
     return ResponseEntity.status(OK).body(responseBody);
   }
 }
