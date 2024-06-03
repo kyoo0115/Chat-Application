@@ -1,5 +1,6 @@
 package project.realtimechatapplication.provider;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -24,24 +25,24 @@ public class TokenProvider {
         return Jwts.builder()
             .signWith(key, SignatureAlgorithm.HS256)
             .setSubject(userId)
-            .setIssuedAt(new Date()).setExpiration(expiredDate)
+            .setIssuedAt(new Date())
+            .setExpiration(expiredDate)
             .compact();
     }
 
-    public String validate (String jwt) {
-        String subject;
-        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    public boolean validateToken(String token) {
         try {
-            subject = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(jwt)
-                .getBody()
-                .getSubject();
-
+            Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
         } catch (Exception e) {
-            return null;
+            return false;
         }
-        return subject;
+    }
+
+    public String getUsernameFromToken(String token) {
+        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return claims.getSubject();
     }
 }
