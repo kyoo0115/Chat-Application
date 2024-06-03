@@ -3,6 +3,10 @@ package project.realtimechatapplication.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,15 +26,15 @@ import project.realtimechatapplication.exception.impl.VerificationNumberNotMatch
 import project.realtimechatapplication.exception.impl.WrongPasswordException;
 import project.realtimechatapplication.model.VerificationNumberGenerator;
 import project.realtimechatapplication.provider.EmailProvider;
+import project.realtimechatapplication.provider.TokenProvider;
 import project.realtimechatapplication.repository.UserRepository;
 import project.realtimechatapplication.repository.VerificationRepository;
-import project.realtimechatapplication.provider.TokenProvider;
 import project.realtimechatapplication.service.AuthService;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AuthServiceImpl implements AuthService {
+public class AuthServiceImpl implements AuthService, UserDetailsService {
 
   private final UserRepository userRepository;
   private final VerificationRepository verificationRepository;
@@ -99,7 +103,7 @@ public class AuthServiceImpl implements AuthService {
 
     String token = tokenProvider.createToken(user.getUsername());
 
-    return SignInResponseDto.authenticate(token);
+    return SignInResponseDto.authenticate(token, user.getUsername());
   }
 
   private void validateUsernameNotExists(String username) {
@@ -127,5 +131,17 @@ public class AuthServiceImpl implements AuthService {
     if(!verificationNumber.equals(verificationEntity.getVerificationNumber())) {
       throw new VerificationNumberNotMatchedException();
     }
+  }
+
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    UserEntity user = userRepository.findByUsername(username)
+        .orElseThrow(() -> new UsernameNotFoundException(username));
+
+    return User.builder()
+        .username(user.getUsername())
+        .password(user.getPassword())
+        .roles("USER")
+        .build();
   }
 }
