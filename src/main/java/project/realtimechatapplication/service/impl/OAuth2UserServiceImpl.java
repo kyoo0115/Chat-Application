@@ -1,19 +1,23 @@
 package project.realtimechatapplication.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Service;
-import project.realtimechatapplication.model.CustomOAuth2User;
-import project.realtimechatapplication.entity.UserEntity;
-import project.realtimechatapplication.repository.UserRepository;
-
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import project.realtimechatapplication.dto.request.auth.KakaoLoginRequestDto;
+import project.realtimechatapplication.dto.response.auth.KakaoLoginResponseDto;
+import project.realtimechatapplication.entity.UserEntity;
+import project.realtimechatapplication.exception.impl.UserNotFoundException;
+import project.realtimechatapplication.provider.TokenProvider;
+import project.realtimechatapplication.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -21,82 +25,71 @@ import java.util.Optional;
 public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
 
   private final UserRepository userRepository;
+  private final RestTemplate restTemplate;
+  private final TokenProvider tokenProvider;
 
-  @Override
-  public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+  private final String REST_API_KEY = "9b0ff9395d3346c83412725ba424f35d";
+  private final String REDIRECT_URI = "http://localhost:8080/oauth2/callback/kakao";
+  private final String TOKEN_URI = "https://kauth.kakao.com/oauth/token";
+  private final String USER_INFO_URI = "https://kapi.kakao.com/v2/user/me";
 
-    OAuth2User oAuth2User = super.loadUser(userRequest);
-    String oauthClientName = userRequest.getClientRegistration().getClientName();
-
-    try{
-      System.out.println(new ObjectMapper().writeValueAsString(oAuth2User.getAttributes()));
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    UserEntity user;
-    if (oauthClientName.equals("kakao")) {
-      user = processKakaoUser(oAuth2User);
-    } else if (oauthClientName.equals("google")) {
-      user = processGoogleUser(oAuth2User);
-    } else {
-      throw new OAuth2AuthenticationException("Unsupported client: " + oauthClientName);
-    }
-
-    userRepository.save(user);
-    return new CustomOAuth2User(user.getUsername());
+  public String getUserByUsername(String username) {
+    UserEntity user = userRepository.findByUsername(username)
+        .orElseThrow(UserNotFoundException::new);
+    return user.getUsername();
   }
 
-  private UserEntity processKakaoUser(OAuth2User oAuth2User) {
-    Map<String, Object> attributes = oAuth2User.getAttributes();
-    String id = attributes.get("id").toString();
-    Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
+  public KakaoLoginResponseDto kakaoLogin(KakaoLoginRequestDto requestDto) {
+
+    Map<String, String> tokenRequest = new HashMap<>();
+    tokenRequest.put("grant_type", "authorization_code");
+    tokenRequest.put("client_id", REST_API_KEY);
+    tokenRequest.put("redirect_uri", REDIRECT_URI);
+    tokenRequest.put("code", requestDto.getAuthorizationCode());
+
+    ResponseEntity<Map> tokenResponseEntity = restTemplate.postForEntity(TOKEN_URI, tokenRequest, Map.class);
+
+    if (!tokenResponseEntity.getStatusCode().is2xxSuccessful() || tokenResponseEntity.getBody() == null) {
+      throw new IllegalArgumentException("Failed to obtain access token from Kakao");
+    }
+
+    Map<String, Object> tokenResponse = tokenResponseEntity.getBody();
+    String accessToken = (String) tokenResponse.get("access_token");
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", "Bearer " + accessToken);
+
+    HttpEntity<String> entity = new HttpEntity<>(headers);
+    ResponseEntity<Map> userInfoResponseEntity = restTemplate.exchange(USER_INFO_URI, HttpMethod.GET, entity, Map.class);
+
+    if (!userInfoResponseEntity.getStatusCode().is2xxSuccessful() || userInfoResponseEntity.getBody() == null) {
+      throw new IllegalArgumentException("Failed to retrieve user info from Kakao");
+    }
+
+    Map<String, Object> userInfo = userInfoResponseEntity.getBody();
+    String id = userInfo.get("id").toString();
+    Map<String, Object> properties = (Map<String, Object>) userInfo.get("properties");
     String nickname = properties.get("nickname").toString();
+    String email = "kakao_" + id + "@kakao.com";  // Constructing email for example purposes
 
-    String username = "kakao_" + id;
-    String email = username + "@kakao.com";
-
-    Optional<UserEntity> existingUser = userRepository.findByUsername(username);
+    Optional<UserEntity> existingUser = userRepository.findByUsername("kakao_" + id);
     UserEntity user;
-
     if (existingUser.isPresent()) {
       user = existingUser.get();
       user.setName(nickname);
     } else {
       user = UserEntity.builder()
           .email(email)
-          .username(username)
+          .username("kakao_" + id)
           .password("password")
           .name(nickname)
           .role("ROLE_USER")
           .build();
+      userRepository.save(user);
     }
-    return user;
-  }
 
-  private UserEntity processGoogleUser(OAuth2User oAuth2User) {
-    Map<String, Object> attributes = oAuth2User.getAttributes();
-    String id = attributes.get("sub").toString();
-    String email = attributes.get("email").toString();
-    String name = attributes.get("name").toString();
+    String token = tokenProvider.createToken(user.getUsername());
 
-    String username = "google_" + id;
-
-    Optional<UserEntity> existingUser = userRepository.findByUsername(username);
-    UserEntity user;
-
-    if (existingUser.isPresent()) {
-      user = existingUser.get();
-      user.setEmail(email);
-      user.setName(name);
-    } else {
-      user = UserEntity.builder()
-          .email(email)
-          .username(username)
-          .password("password")
-          .name(name)
-          .role("ROLE_USER")
-          .build();
-    }
-    return user;
+    return new KakaoLoginResponseDto(token, user.getUsername(), user.getEmail());
   }
 }
