@@ -28,7 +28,7 @@ import project.realtimechatapplication.dto.request.auth.SignUpRequestDto;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserEntity extends BaseEntity{
+public class UserEntity extends TimeStamped {
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private Long id;
@@ -56,7 +56,7 @@ public class UserEntity extends BaseEntity{
   private List<NotificationEntity> notifications = new ArrayList<>();
 
   @OneToMany(mappedBy = "user", cascade = ALL, fetch = LAZY)
-  private List<ChatRoomEntity> chatRooms = new ArrayList<>();
+  private List<MemberChatRoomEntity> memberChatRooms = new ArrayList<>();
 
   public static UserEntity of(SignUpRequestDto dto) {
     return UserEntity.builder()

@@ -19,7 +19,7 @@ import project.realtimechatapplication.model.type.NotificationType;
 @Entity
 @Getter
 @NoArgsConstructor
-public class NotificationEntity extends BaseEntity {
+public class NotificationEntity extends TimeStamped {
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private Long id;

@@ -21,7 +21,7 @@ import project.realtimechatapplication.model.type.Reaction;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ReactionEntity extends BaseEntity {
+public class ReactionEntity extends TimeStamped {
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private Long id;
