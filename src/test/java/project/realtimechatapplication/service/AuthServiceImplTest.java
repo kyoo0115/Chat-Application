@@ -37,9 +37,9 @@ import project.realtimechatapplication.exception.impl.UsernameAlreadyExistsExcep
 import project.realtimechatapplication.exception.impl.VerificationNumberNotMatchedException;
 import project.realtimechatapplication.exception.impl.WrongPasswordException;
 import project.realtimechatapplication.provider.EmailProvider;
+import project.realtimechatapplication.provider.TokenProvider;
 import project.realtimechatapplication.repository.UserRepository;
 import project.realtimechatapplication.repository.VerificationRepository;
-import project.realtimechatapplication.provider.TokenProvider;
 import project.realtimechatapplication.service.impl.AuthServiceImpl;
 
 public class AuthServiceImplTest {
