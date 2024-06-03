@@ -16,23 +16,3 @@ spring:
           starttls:
             enable: true
           auth: true
-
-  security:
-    oauth2:
-      client:
-        registration:
-          kakao:
-            client-id: 9b0ff9395d3346c83412725ba424f35d
-            client-secret: aWOlyeAGkiF7enMgoJA7HIpxEF8OBmNN
-            redirect-uri: http://localhost:8080/oauth2/callback/{registrationId}
-            authorization-grant-type: authorization_code
-            scope: profile_nickname
-            client-authentication-method: client_secret_post
-#          google:
-
-        provider:
-          kakao:
-            authorization-uri: https://kauth.kakao.com/oauth/authorize
-            token-uri: https://kauth.kakao.com/oauth/token
-            user-info-uri: https://kapi.kakao.com/v2/user/me
-            user-name-attribute: id
