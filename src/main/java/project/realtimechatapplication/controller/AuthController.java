@@ -2,6 +2,7 @@ package project.realtimechatapplication.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,7 @@ import project.realtimechatapplication.service.AuthService;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
   private final AuthService authService;
@@ -61,6 +63,7 @@ public class AuthController {
   public ResponseEntity<?> signIn(
       @RequestBody @Valid SignInRequestDto dto
   ) {
+    log.info("signIn : {}", dto.getUsername());
     return authService.signIn(dto);
   }
 }
