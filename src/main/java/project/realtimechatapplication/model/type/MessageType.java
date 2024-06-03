@@ -1,2 +1,5 @@
-package project.realtimechatapplication.model.type;public class MessageType {
+package project.realtimechatapplication.model.type;
+
+public enum MessageType {
+  ENTER, CHAT, LEAVE
 }
