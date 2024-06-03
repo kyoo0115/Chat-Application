@@ -17,7 +17,7 @@ import project.realtimechatapplication.dto.request.auth.SendVerificationEmailReq
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class VerificationEntity extends BaseEntity {
+public class VerificationEntity extends TimeStamped {
 
   @Id
   private String username;

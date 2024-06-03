@@ -2,6 +2,7 @@ package project.realtimechatapplication.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.realtimechatapplication.dto.request.auth.CheckVerificationRequestDto;
 import project.realtimechatapplication.dto.request.auth.SendVerificationEmailRequestDto;
+import project.realtimechatapplication.dto.request.auth.SignInRequestDto;
 import project.realtimechatapplication.dto.request.auth.SignUpRequestDto;
 import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
 import project.realtimechatapplication.dto.response.auth.CheckVerificationResponseDto;
@@ -17,10 +19,10 @@ import project.realtimechatapplication.dto.response.auth.SignUpResponseDto;
 import project.realtimechatapplication.dto.response.auth.UsernameCheckResponseDto;
 import project.realtimechatapplication.service.AuthService;
 
-
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
   private final AuthService authService;
@@ -55,5 +57,13 @@ public class AuthController {
   ) {
     authService.signUp(dto);
     return SignUpResponseDto.success();
+  }
+
+  @PostMapping("/sign-in")
+  public ResponseEntity<?> signIn(
+      @RequestBody @Valid SignInRequestDto dto
+  ) {
+    log.info("signIn : {}", dto.getUsername());
+    return authService.signIn(dto);
   }
 }

@@ -12,12 +12,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import project.realtimechatapplication.model.type.NotificationType;
 
 @Table(name = "notification")
 @Entity
 @Getter
-public class NotificationEntity extends BaseEntity {
+@NoArgsConstructor
+public class NotificationEntity extends TimeStamped {
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private Long id;
