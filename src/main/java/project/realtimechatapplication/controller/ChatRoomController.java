@@ -26,19 +26,19 @@ public class ChatRoomController {
   private final ChatRoomService chatRoomService;
 
   @PostMapping("/create")
-  public ResponseEntity<ChatRoomDto> createChatRoom(
-      @RequestBody final ChatRoomCreateRequestDto request,
+  public ResponseEntity<?> createChatRoom(
+      @RequestBody final ChatRoomCreateRequestDto dto,
       @AuthenticationPrincipal final User user) {
-    ChatRoomDto chatRoom = chatRoomService.createChatRoom(request.getRoomName(), user.getUsername());
+    ChatRoomDto chatRoom = chatRoomService.createChatRoom(dto, user.getUsername());
 
     return ResponseEntity.status(HttpStatus.OK).body(chatRoom);
   }
 
   @PostMapping("/addMember")
-  public ResponseEntity<ChatRoomDto> addMemberToChatRoom(
-      @RequestBody final ChatRoomAddRequestDto request,
+  public ResponseEntity<?> addMemberToChatRoom(
+      @RequestBody final ChatRoomAddRequestDto dto,
       @AuthenticationPrincipal final User user) {
-    ChatRoomDto chatRoom = chatRoomService.addMemberToChatRoom(request.getRoomCode(), user.getUsername(), request.getUsername());
+    ChatRoomDto chatRoom = chatRoomService.addMemberToChatRoom(dto);
     return ResponseEntity.status(HttpStatus.OK).body(chatRoom);
   }
 
