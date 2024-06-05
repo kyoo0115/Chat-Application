@@ -47,9 +47,9 @@ public class WebSecurity {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         )
         .authorizeHttpRequests(request -> request
-            .requestMatchers("/", "/auth/**", "/auth/oauth2/**", "/ws/chat/**", "/index.html", "app.js").permitAll()
+            .requestMatchers("/", "/auth/**", "/auth/oauth2/**", "/ws/chat/**", "/index.html", "/signup.html", "/js/**").permitAll()
                 .requestMatchers("/**").permitAll()
-            .requestMatchers("/user/**").hasRole("USER")
+//            .requestMatchers("/user/**").hasRole("USER")
             .anyRequest().authenticated()
         )
         .oauth2Login(oauth2 -> oauth2
@@ -72,6 +72,8 @@ public class WebSecurity {
     configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
     configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowedOrigins(List.of("*"));
+    configuration.setAllowCredentials(true);
+    configuration.addExposedHeader("Authorization");
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);

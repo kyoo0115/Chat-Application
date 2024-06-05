@@ -21,9 +21,10 @@ function login(event) {
   })
   .then(data => {
     token = data.token;
-    username = usernameInput; // Use the input username as it is already validated
+    username = usernameInput;
     sessionStorage.setItem("token", token);
     sessionStorage.setItem("username", username);
+    console.log("Token stored in sessionStorage:", token);
     window.location.href = "/chat.html";
   })
   .catch(error => {

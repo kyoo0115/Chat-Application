@@ -1,5 +1,6 @@
 package project.realtimechatapplication.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ public class ChatRoomController {
 
   @PostMapping("/create")
   public ResponseEntity<?> createChatRoom(
-      @RequestBody final ChatRoomCreateRequestDto dto,
+      @RequestBody @Valid final ChatRoomCreateRequestDto dto,
       @AuthenticationPrincipal final User user) {
     ChatRoomDto chatRoom = chatRoomService.createChatRoom(dto, user.getUsername());
 
@@ -36,7 +37,7 @@ public class ChatRoomController {
 
   @PostMapping("/addMember")
   public ResponseEntity<?> addMemberToChatRoom(
-      @RequestBody final ChatRoomAddRequestDto dto,
+      @RequestBody @Valid final ChatRoomAddRequestDto dto,
       @AuthenticationPrincipal final User user) {
     ChatRoomDto chatRoom = chatRoomService.addMemberToChatRoom(dto);
     return ResponseEntity.status(HttpStatus.OK).body(chatRoom);

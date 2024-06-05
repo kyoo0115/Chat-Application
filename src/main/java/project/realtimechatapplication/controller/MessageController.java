@@ -1,5 +1,6 @@
 package project.realtimechatapplication.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -23,7 +24,7 @@ public class MessageController {
 
   @MessageMapping("/chat/enter")
   public void enterChatRoom(
-      @Payload ChatDto chatDto,
+      @Payload @Valid ChatDto chatDto,
       SimpMessageHeaderAccessor headerAccessor) {
     log.info("enterChatRoom : {}", chatDto.getSender());
     ChatDto newChatDto = messageService.makeEnterMessageAndSetSessionAttribute(chatDto, headerAccessor);
@@ -32,7 +33,7 @@ public class MessageController {
 
   @MessageMapping("/chat/send")
   public void sendChatMessage(
-      @Payload ChatDto chatDto) {
+      @Payload @Valid ChatDto chatDto) {
     log.info("sendChatMessage : {}", chatDto.getSender());
     MessageSendResponseDto messageSendResponseDto = messageService.sendMessage(chatDto);
     msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), messageSendResponseDto);

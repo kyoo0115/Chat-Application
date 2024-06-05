@@ -58,7 +58,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     @Override
-    @Transactional(readOnly = true) //쿼리 한번으로 최적화 성공
+    @Transactional(readOnly = true)
     public List<ChatRoomDto> searchChatRoomList(String username) {
 
         List<ChatRoomEntity> chatRooms = memberChatRoomRepository.findChatRoomsByUsername(username);

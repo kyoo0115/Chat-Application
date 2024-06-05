@@ -12,5 +12,4 @@ public class UsernameCheckRequestDto {
 
   @NotBlank(message = "Invalid username: empty name")
   private String username;
-
 }

@@ -6,8 +6,8 @@ let selectedRoomCode = null;
 function setConnected(connected) {
   $("#connect").prop("disabled", connected);
   $("#disconnect").prop("disabled", !connected);
-  $("#enter").prop("disabled", !connected);
-  $("#send").prop("disabled", !connected);
+  $("#enter").prop("disabled", !connected || !selectedRoomCode);
+  $("#send").prop("disabled", true);
   if (connected) {
     $("#conversation").show();
   } else {
@@ -17,7 +17,12 @@ function setConnected(connected) {
 }
 
 function connect() {
-  console.log("Connecting...");
+  if (!token) {
+    console.error("No token found. Please log in.");
+    alert("No token found. Please log in.");
+    return;
+  }
+
   stompClient = new StompJs.Client({
     brokerURL: 'ws://localhost:8080/ws/chat',
     connectHeaders: {
@@ -35,9 +40,7 @@ function connect() {
     setConnected(true);
     console.log('Connected: ' + frame);
     if (selectedRoomCode) {
-      stompClient.subscribe(`/topic/chat/room/${selectedRoomCode}`, (message) => {
-        showGreeting(JSON.parse(message.body).message);
-      });
+      subscribeToRoom(selectedRoomCode);
     }
   };
 
@@ -68,16 +71,19 @@ function enterChatRoom() {
     alert("Please select a chat room first.");
     return;
   }
+  const enterMessage = `${username} has entered the chat room.`;
   stompClient.publish({
     destination: "/app/chat/enter",
     body: JSON.stringify({
       'roomCode': selectedRoomCode,
       'sender': username,
-      'message': '',
+      'message': enterMessage,
       'type': 'ENTER'
     })
   });
+  showGreeting(enterMessage); // Append the enter message to the text area
   $("#send").prop("disabled", false);
+  $("#enter").prop("disabled", true); // Disable the enter button after entering the room
 }
 
 function sendMessage() {
@@ -86,12 +92,13 @@ function sendMessage() {
     alert("Please select a chat room first.");
     return;
   }
+  const chatMessage = $("#message").val();
   stompClient.publish({
     destination: "/app/chat/send",
     body: JSON.stringify({
       'roomCode': selectedRoomCode,
       'sender': username,
-      'message': $("#message").val(),
+      'message': chatMessage,
       'type': 'CHAT'
     })
   });
@@ -100,6 +107,19 @@ function sendMessage() {
 
 function showGreeting(message) {
   $("#greetings").val($("#greetings").val() + message + "\n");
+}
+
+function subscribeToRoom(roomCode) {
+  if (stompClient && stompClient.connected) {
+    stompClient.subscribe(`/topic/chat/room/${roomCode}`, (message) => {
+      const parsedMessage = JSON.parse(message.body);
+      if (parsedMessage.type === 'CHAT') {
+        showGreeting(`${parsedMessage.sender}: ${parsedMessage.message}`);
+      } else {
+        showGreeting(parsedMessage.message);
+      }
+    });
+  }
 }
 
 function logout(event) {
@@ -114,6 +134,8 @@ function createChatRoom(event) {
   event.preventDefault();
   const roomName = prompt("Enter chat room name:");
   if (!roomName) return;
+
+  console.log("Creating chat room with token:", token);
 
   fetch('http://localhost:8080/api/chatroom/create', {
     method: 'POST',
@@ -139,7 +161,13 @@ function createChatRoom(event) {
 }
 
 function loadChatRooms() {
-  console.log("Loading chat rooms...");
+  console.log("Loading chat rooms with token:", token);
+  if (!token) {
+    console.error("No token found. Please log in.");
+    alert("No token found. Please log in.");
+    return;
+  }
+
   fetch('http://localhost:8080/api/chatroom/room', {
     method: 'GET',
     headers: {
@@ -209,7 +237,7 @@ function addMemberToChatRoom(roomCode) {
 }
 
 $(function () {
-  console.log("Chat script loaded.");
+  $("#welcome-username").text(username);
   $("#connect").click((e) => {
     e.preventDefault();
     connect();

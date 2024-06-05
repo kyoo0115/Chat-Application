@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat Application - Sign Up</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="/js/signup.js"></script>
+</head>
+<body>
+<div id="signup-page" class="container">
+  <h2>Sign Up</h2>
+  <form id="signup-form">
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input type="text" class="form-control" id="username" required>
+      <button type="button" id="check-username" class="btn btn-default">Check Username</button>
+      <p id="username-check-result" style="color:red;"></p>
+    </div>
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="text" class="form-control" id="name" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" class="form-control" id="password" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control" id="email" required>
+      <button type="button" id="send-verification-email" class="btn btn-default">Send Verification Email</button>
+      <p id="email-check-result" style="color:red;"></p>
+    </div>
+    <div class="form-group">
+      <label for="birthDate">Birth Date:</label>
+      <input type="date" class="form-control" id="birthDate" required>
+    </div>
+    <div class="form-group">
+      <label for="verificationNumber">Verification Number:</label>
+      <input type="text" class="form-control" id="verificationNumber" required>
+      <button type="button" id="check-verification-number" class="btn btn-default">Check Verification Number</button>
+      <p id="verification-check-result" style="color:red;"></p>
+    </div>
+    <button type="submit" class="btn btn-primary" id="signup-button" disabled>Sign Up</button>
+  </form>
+  <p id="signup-error" style="color:red;"></p>
+  <a href="/index.html">Already have an account? Log in here.</a>
+</div>
+</body>
+</html>
