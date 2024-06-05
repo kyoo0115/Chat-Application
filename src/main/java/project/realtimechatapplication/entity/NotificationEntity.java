@@ -29,7 +29,7 @@ public class NotificationEntity extends TimeStamped {
   private NotificationType type;
 
   @Column(nullable = false)
-  private Boolean isRead;
+  private boolean isRead;
 
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)

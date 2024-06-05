@@ -9,6 +9,7 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
+import project.realtimechatapplication.exception.impl.JWTErrorException;
 import project.realtimechatapplication.provider.TokenProvider;
 
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class StompHandler implements ChannelInterceptor {
         if (tokenProvider.validateToken(token)) {
           accessor.setUser(() -> tokenProvider.getUsernameFromToken(token));
         } else {
-          throw new IllegalArgumentException("Invalid token");
+          throw new JWTErrorException();
         }
       }
     }

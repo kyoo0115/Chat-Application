@@ -9,8 +9,8 @@ import project.realtimechatapplication.dto.response.chat.MessageSendResponseDto;
 import project.realtimechatapplication.entity.ChatRoomEntity;
 import project.realtimechatapplication.entity.MessageEntity;
 import project.realtimechatapplication.entity.UserEntity;
+import project.realtimechatapplication.exception.impl.ChatRoomNotFoundException;
 import project.realtimechatapplication.exception.impl.UserNotFoundException;
-import project.realtimechatapplication.model.type.MessageType;
 import project.realtimechatapplication.repository.ChatRoomRepository;
 import project.realtimechatapplication.repository.MessageRepository;
 import project.realtimechatapplication.repository.UserRepository;
@@ -28,7 +28,7 @@ public class MessageServiceImpl implements MessageService {
     @Transactional
     public MessageSendResponseDto sendMessage(ChatDto chatDto) {
         ChatRoomEntity chatRoom = chatRoomRepository.findByRoomCode(chatDto.getRoomCode())
-                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
+                .orElseThrow(ChatRoomNotFoundException::new);
 
         UserEntity sender = userRepository.findByUsername(chatDto.getSender())
                 .orElseThrow(UserNotFoundException::new);
