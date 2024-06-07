@@ -15,7 +15,6 @@ import org.springframework.web.client.RestTemplate;
 import project.realtimechatapplication.dto.request.auth.KakaoLoginRequestDto;
 import project.realtimechatapplication.dto.response.auth.KakaoLoginResponseDto;
 import project.realtimechatapplication.entity.UserEntity;
-import project.realtimechatapplication.exception.impl.UserNotFoundException;
 import project.realtimechatapplication.provider.TokenProvider;
 import project.realtimechatapplication.repository.UserRepository;
 
@@ -32,12 +31,6 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
   private final String REDIRECT_URI = "http://localhost:8080/oauth2/callback/kakao";
   private final String TOKEN_URI = "https://kauth.kakao.com/oauth/token";
   private final String USER_INFO_URI = "https://kapi.kakao.com/v2/user/me";
-
-  public String getUserByUsername(String username) {
-    UserEntity user = userRepository.findByUsername(username)
-        .orElseThrow(UserNotFoundException::new);
-    return user.getUsername();
-  }
 
   public KakaoLoginResponseDto kakaoLogin(KakaoLoginRequestDto requestDto) {
 
@@ -70,7 +63,7 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
     String id = userInfo.get("id").toString();
     Map<String, Object> properties = (Map<String, Object>) userInfo.get("properties");
     String nickname = properties.get("nickname").toString();
-    String email = "kakao_" + id + "@kakao.com";  // Constructing email for example purposes
+    String email = properties.get("email").toString();
 
     Optional<UserEntity> existingUser = userRepository.findByUsername("kakao_" + id);
     UserEntity user;
@@ -81,7 +74,6 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
       user = UserEntity.builder()
           .email(email)
           .username("kakao_" + id)
-          .password("password")
           .name(nickname)
           .role("ROLE_USER")
           .build();
