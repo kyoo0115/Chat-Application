@@ -1,14 +1,27 @@
 package project.realtimechatapplication.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import project.realtimechatapplication.dto.request.chat.ChatDto;
+import project.realtimechatapplication.dto.request.chat.DeleteMessageRequestDto;
+import project.realtimechatapplication.dto.request.chat.EditMessageRequestDto;
+import project.realtimechatapplication.dto.response.CustomResponse;
+import project.realtimechatapplication.dto.response.chat.DeleteMessageResponseDto;
+import project.realtimechatapplication.dto.response.chat.EditMessageResponseDto;
 import project.realtimechatapplication.dto.response.chat.MessageSendResponseDto;
 import project.realtimechatapplication.service.MessageService;
 
@@ -36,5 +49,29 @@ public class MessageController {
     log.info("sendChatMessage : {}", chatDto.getSender());
     MessageSendResponseDto messageSendResponseDto = messageService.sendMessage(chatDto);
     msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), messageSendResponseDto);
+  }
+
+  @PutMapping("/chat/{messageId}")
+  public ResponseEntity<?> editChatMessage(
+      @RequestBody @Valid EditMessageRequestDto dto,
+      @AuthenticationPrincipal final User user,
+               @PathVariable Long messageId
+  ) {
+    log.info("editChatMessage : {}", dto.getSender());
+    EditMessageResponseDto messageEditResponseDto = messageService.editMessage(dto, user.getUsername(), messageId);
+    msgOperation.convertAndSend("/topic/chat/room/" + dto.getRoomCode(), messageEditResponseDto);
+    return CustomResponse.success(messageEditResponseDto);
+  }
+
+  @DeleteMapping("/chat/{messageId}")
+  public ResponseEntity<?> deleteChatMessage(
+      @RequestBody @Valid DeleteMessageRequestDto dto,
+      @AuthenticationPrincipal final User user,
+               @PathVariable Long messageId
+  ) {
+    log.info("deleteChatMessage : {}", dto.getSender());
+    DeleteMessageResponseDto deleteMessageResponseDto = messageService.deleteMessage(dto, user.getUsername(), messageId);
+    msgOperation.convertAndSend("/topic/chat/room/" + dto.getRoomCode(), deleteMessageResponseDto);
+    return CustomResponse.success(deleteMessageResponseDto);
   }
 }
