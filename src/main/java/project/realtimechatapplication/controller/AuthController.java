@@ -13,10 +13,8 @@ import project.realtimechatapplication.dto.request.auth.SendVerificationEmailReq
 import project.realtimechatapplication.dto.request.auth.SignInRequestDto;
 import project.realtimechatapplication.dto.request.auth.SignUpRequestDto;
 import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
-import project.realtimechatapplication.dto.response.auth.CheckVerificationResponseDto;
-import project.realtimechatapplication.dto.response.auth.SendVerificationEmailResponseDto;
-import project.realtimechatapplication.dto.response.auth.SignUpResponseDto;
-import project.realtimechatapplication.dto.response.auth.UsernameCheckResponseDto;
+import project.realtimechatapplication.dto.response.CustomResponse;
+import project.realtimechatapplication.dto.response.auth.SignInResponseDto;
 import project.realtimechatapplication.service.AuthService;
 
 @RestController
@@ -32,7 +30,7 @@ public class AuthController {
       @RequestBody @Valid UsernameCheckRequestDto dto
   ) {
     authService.usernameCheck(dto);
-    return UsernameCheckResponseDto.success();
+    return CustomResponse.success();
   }
 
   @PostMapping("/send-verification-email")
@@ -40,7 +38,7 @@ public class AuthController {
       @RequestBody @Valid SendVerificationEmailRequestDto dto
   ) {
     authService.sendVerificationEmail(dto);
-    return SendVerificationEmailResponseDto.success();
+    return CustomResponse.success();
   }
 
   @PostMapping("/check-verification-email")
@@ -48,7 +46,7 @@ public class AuthController {
       @RequestBody @Valid CheckVerificationRequestDto dto
   ) {
     authService.checkVerification(dto);
-    return CheckVerificationResponseDto.success();
+    return CustomResponse.success();
   }
 
   @PostMapping("/sign-up")
@@ -56,7 +54,7 @@ public class AuthController {
       @RequestBody @Valid SignUpRequestDto dto
   ) {
     authService.signUp(dto);
-    return SignUpResponseDto.success();
+    return CustomResponse.success();
   }
 
   @PostMapping("/sign-in")
@@ -64,6 +62,7 @@ public class AuthController {
       @RequestBody @Valid SignInRequestDto dto
   ) {
     log.info("signIn : {}", dto.getUsername());
-    return authService.signIn(dto);
+    SignInResponseDto signInResponse = authService.signIn(dto);
+    return CustomResponse.success(signInResponse);
   }
 }
