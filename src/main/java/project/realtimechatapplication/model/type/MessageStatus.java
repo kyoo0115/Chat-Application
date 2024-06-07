@@ -1,2 +1,5 @@
-package project.realtimechatapplication.model.type;public class MessageStatus {
+package project.realtimechatapplication.model.type;
+
+public enum MessageStatus {
+  EDIT, DELETE
 }
