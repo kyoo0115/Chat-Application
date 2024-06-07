@@ -1,6 +1,7 @@
 package project.realtimechatapplication.entity;
 
 import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -36,18 +37,22 @@ public class ChatRoomEntity extends TimeStamped {
   @Column(nullable = false, unique = true)
   private String roomCode;
 
-  @OneToMany(mappedBy = "chatRoom", cascade = ALL, fetch = LAZY)
+  @Column(nullable = false)
+  private String owner;
+
+  @OneToMany(mappedBy = "chatRoom", cascade = REMOVE, fetch = LAZY, orphanRemoval = true)
   private List<MessageEntity> messages = new ArrayList<>();
 
-  @OneToMany(mappedBy = "chatRoom", cascade = ALL, fetch = LAZY)
+  @OneToMany(mappedBy = "chatRoom", cascade = REMOVE, fetch = LAZY, orphanRemoval = true)
   private List<MemberChatRoomEntity> memberChatRooms = new ArrayList<>();
 
-  private ChatRoomEntity(String roomName) {
+  private ChatRoomEntity(String roomName, String owner) {
     this.roomCode = UUID.randomUUID().toString();
     this.name = roomName;
+    this.owner = owner;
   }
 
-  public static ChatRoomEntity of(String roomName) {
-    return new ChatRoomEntity(roomName);
+  public static ChatRoomEntity of(String roomName, String owner) {
+    return new ChatRoomEntity(roomName, owner);
   }
 }
