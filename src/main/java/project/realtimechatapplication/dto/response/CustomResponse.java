@@ -1,19 +1,20 @@
 package project.realtimechatapplication.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import project.realtimechatapplication.model.ResponseCode;
-import project.realtimechatapplication.model.ResponseMessage;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-@Getter
-@AllArgsConstructor
-public class ResponseDto {
 
-  private String code;
-  private String message;
+public class CustomResponse<T> extends ResponseEntity<T> {
 
-  public ResponseDto() {
-    this.code = ResponseCode.SUCCESS;
-    this.message = ResponseMessage.SUCCESS;
+  private CustomResponse(T body, HttpStatus status) {
+    super(body, status);
+  }
+
+  public static CustomResponse<?> success() {
+    return new CustomResponse<>(null, HttpStatus.OK);
+  }
+
+  public static CustomResponse<?> success(Object body) {
+    return new CustomResponse<>(body, HttpStatus.OK);
   }
 }
