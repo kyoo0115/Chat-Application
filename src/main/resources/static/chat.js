@@ -183,7 +183,7 @@ function addMemberToChatRoom(roomCode) {
   const memberUsername = prompt("Enter username to add to chat room:");
   if (!memberUsername) return;
 
-  fetch('http://localhost:8080/api/chatroom/addMember', {
+  fetch('http://localhost:8080/api/chatroom', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
