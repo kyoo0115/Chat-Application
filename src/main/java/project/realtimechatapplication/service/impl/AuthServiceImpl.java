@@ -2,7 +2,6 @@ package project.realtimechatapplication.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -89,7 +88,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
   }
 
   @Override
-  public ResponseEntity<SignInResponseDto> signIn(SignInRequestDto dto) {
+  public SignInResponseDto signIn(SignInRequestDto dto) {
 
     UserEntity user = userRepository.findByUsername(dto.getUsername())
         .orElseThrow(UserNotFoundException::new);
@@ -103,7 +102,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
     String token = tokenProvider.createToken(user.getUsername());
 
-    return SignInResponseDto.authenticate(token, user.getUsername());
+    return new SignInResponseDto(token, user.getUsername());
   }
 
   private void validateUsernameNotExists(String username) {
