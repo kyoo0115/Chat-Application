@@ -3,7 +3,7 @@ package project.realtimechatapplication.exception.impl;
 import org.springframework.http.HttpStatus;
 import project.realtimechatapplication.exception.AbstractException;
 
-public class UnauthorizedMessageDeletionException extends AbstractException {
+public class UnauthorizedMessageEditException extends AbstractException {
 
   @Override
   public int getStatusCode() {
@@ -12,6 +12,6 @@ public class UnauthorizedMessageDeletionException extends AbstractException {
 
   @Override
   public String getMessage() {
-    return "You are not authorized to delete this message.";
+    return "You are not authorized to edit this message.";
   }
 }

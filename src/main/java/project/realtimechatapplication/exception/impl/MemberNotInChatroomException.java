@@ -3,15 +3,15 @@ package project.realtimechatapplication.exception.impl;
 import org.springframework.http.HttpStatus;
 import project.realtimechatapplication.exception.AbstractException;
 
-public class MemberAlreadyInChatroomException extends AbstractException {
+public class MemberNotInChatroomException extends AbstractException {
 
   @Override
   public int getStatusCode() {
-    return HttpStatus.BAD_REQUEST.value();
+    return HttpStatus.NOT_FOUND.value();
   }
 
   @Override
   public String getMessage() {
-    return "Member to be added is already in the chatroom.";
+    return "Member is not existing in the chatroom.";
   }
 }
