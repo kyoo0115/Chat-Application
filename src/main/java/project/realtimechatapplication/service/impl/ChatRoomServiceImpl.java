@@ -48,9 +48,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
   @Override
   @Transactional
-  public ChatRoomDto addMemberToChatRoom(ChatRoomAddRequestDto dto, String username, Long memberId) {
+  public ChatRoomDto addMemberToChatRoom(ChatRoomAddRequestDto dto, String username,
+      Long memberId) {
 
-    ChatRoomMembershipDto membershipDto = memberChatRoomRepository.checkChatRoomAndUserDetails(dto.getRoomCode(), username, memberId)
+    ChatRoomMembershipDto membershipDto = memberChatRoomRepository.checkChatRoomAndUserDetails(
+            dto.getRoomCode(), username, memberId)
         .orElseThrow(ChatRoomNotFoundException::new);
 
     if (!membershipDto.getOwnerUsername().equals(username)) {
@@ -93,11 +95,12 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Transactional
   public ChatRoomDto removeMemberFromChatRoom(Long userId, Long roomId, String username) {
 
-    ChatRoomMembershipDto membershipDto = memberChatRoomRepository.checkChatRoomAndUserDetailsById(roomId, username, userId)
+    ChatRoomMembershipDto membershipDto = memberChatRoomRepository.checkChatRoomAndUserDetailsById(
+            roomId, username, userId)
         .orElseThrow(ChatRoomNotFoundException::new);
 
     if (!membershipDto.getOwnerUsername().equals(username)) {
-       throw new UnauthorizedRoomOwnerException();
+      throw new UnauthorizedRoomOwnerException();
     }
 
     if (!membershipDto.isMemberAlreadyInChatRoom()) {
@@ -107,7 +110,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     UserEntity member = userRepository.findById(userId)
         .orElseThrow(UserNotFoundException::new);
 
-    MemberChatRoomEntity memberChatRoom = memberChatRoomRepository.findByUserAndChatRoom(member, chatRoomRepository.getReferenceById(roomId))
+    MemberChatRoomEntity memberChatRoom = memberChatRoomRepository.findByUserAndChatRoom(member,
+            chatRoomRepository.getReferenceById(roomId))
         .orElseThrow(MemberNotInChatroomException::new);
     memberChatRoomRepository.delete(memberChatRoom);
 

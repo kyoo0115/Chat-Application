@@ -6,7 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ChatRoomResponseDto {
-    private Long id;
-    private String name;
-    private Boolean isPrivate;
+
+  private Long id;
+  private String name;
+  private Boolean isPrivate;
 }

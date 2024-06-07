@@ -2,8 +2,8 @@ package project.realtimechatapplication.exception;
 
 public abstract class AbstractException extends RuntimeException {
 
-    public abstract int getStatusCode();
+  public abstract int getStatusCode();
 
-    @Override
-    public abstract String getMessage();
+  @Override
+  public abstract String getMessage();
 }

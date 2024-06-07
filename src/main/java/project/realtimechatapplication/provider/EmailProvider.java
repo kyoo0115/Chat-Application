@@ -14,33 +14,35 @@ import project.realtimechatapplication.exception.impl.EmailSendErrorException;
 @Slf4j
 public class EmailProvider {
 
-    private final JavaMailSender javaMailSender;
-    private final String SUBJECT = "[Chat-Connect] 인증 매일입니다.";
+  private final JavaMailSender javaMailSender;
+  private final String SUBJECT = "[Chat-Connect] 인증 매일입니다.";
 
-    public void sendVerificationEmail(String email, String verificationNumber) {
-      try{
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+  public void sendVerificationEmail(String email, String verificationNumber) {
+    try {
+      MimeMessage message = javaMailSender.createMimeMessage();
+      MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
 
-        String htmlContent = getVerificationMessage(verificationNumber);
+      String htmlContent = getVerificationMessage(verificationNumber);
 
-        messageHelper.setTo(email);
-        messageHelper.setSubject(SUBJECT);
-        messageHelper.setText(htmlContent, true);
-        javaMailSender.send(message);
+      messageHelper.setTo(email);
+      messageHelper.setSubject(SUBJECT);
+      messageHelper.setText(htmlContent, true);
+      javaMailSender.send(message);
 
-      } catch (MessagingException e) {
-        log.error("Email 전송 실패 {}", e.getMessage());
-        throw new EmailSendErrorException();
-      }
+    } catch (MessagingException e) {
+      log.error("Email 전송 실패 {}", e.getMessage());
+      throw new EmailSendErrorException();
     }
+  }
 
-    private String getVerificationMessage(String verificationNumber) {
+  private String getVerificationMessage(String verificationNumber) {
 
-      String verificationMessage = "";
-      verificationMessage += "<h1 style='text-align: center;'> [Chat-Connect] 인증매일</h1>";
-      verificationMessage += "<h3 style='text-align: center;'> 인증코드 : <strong style='font-size: 32px; letter-spacing: 8px;'>" + verificationNumber + "</strong></h3>";
+    String verificationMessage = "";
+    verificationMessage += "<h1 style='text-align: center;'> [Chat-Connect] 인증매일</h1>";
+    verificationMessage +=
+        "<h3 style='text-align: center;'> 인증코드 : <strong style='font-size: 32px; letter-spacing: 8px;'>"
+            + verificationNumber + "</strong></h3>";
 
-      return verificationMessage;
-    }
+    return verificationMessage;
+  }
 }

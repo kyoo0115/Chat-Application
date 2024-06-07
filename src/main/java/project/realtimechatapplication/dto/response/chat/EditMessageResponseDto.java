@@ -8,6 +8,7 @@ import project.realtimechatapplication.model.type.MessageStatus;
 @Getter
 @Builder
 public class EditMessageResponseDto {
+
   private Long messageId;
   private String newMessage;
   private String senderId;

@@ -29,83 +29,87 @@ import project.realtimechatapplication.service.MessageService;
 @Transactional(readOnly = true)
 public class MessageServiceImpl implements MessageService {
 
-    private final MessageRepository messageRepository;
-    private final ChatRoomRepository chatRoomRepository;
-    private final UserRepository userRepository;
+  private final MessageRepository messageRepository;
+  private final ChatRoomRepository chatRoomRepository;
+  private final UserRepository userRepository;
 
-    @Override
-    @Transactional
-    public MessageSendResponseDto sendMessage(ChatDto chatDto) {
-        ChatRoomEntity chatRoom = chatRoomRepository.findByRoomCode(chatDto.getRoomCode())
-                .orElseThrow(ChatRoomNotFoundException::new);
+  @Override
+  @Transactional
+  public MessageSendResponseDto sendMessage(ChatDto chatDto) {
+    ChatRoomEntity chatRoom = chatRoomRepository.findByRoomCode(chatDto.getRoomCode())
+        .orElseThrow(ChatRoomNotFoundException::new);
 
-        UserEntity sender = userRepository.findByUsername(chatDto.getSender())
-                .orElseThrow(UserNotFoundException::new);
+    UserEntity sender = userRepository.findByUsername(chatDto.getSender())
+        .orElseThrow(UserNotFoundException::new);
 
-        MessageEntity messageEntity = MessageEntity.of(chatDto.getType(), chatDto.getMessage(), chatRoom, sender);
+    MessageEntity messageEntity = MessageEntity.of(chatDto.getType(), chatDto.getMessage(),
+        chatRoom, sender);
 
-        messageRepository.save(messageEntity);
+    messageRepository.save(messageEntity);
 
-        return MessageSendResponseDto.builder()
-                .messageId(messageEntity.getId())
-                .message(messageEntity.getMessage())
-                .chatRoomId(chatRoom.getId())
-                .timestamp(messageEntity.getCreatedAt())
-                .build();
+    return MessageSendResponseDto.builder()
+        .messageId(messageEntity.getId())
+        .message(messageEntity.getMessage())
+        .chatRoomId(chatRoom.getId())
+        .timestamp(messageEntity.getCreatedAt())
+        .build();
+  }
+
+  @Override
+  public ChatDto makeEnterMessageAndSetSessionAttribute(ChatDto dto,
+      SimpMessageHeaderAccessor headerAccessor) {
+    headerAccessor.getSessionAttributes().put("username", dto.getSender());
+    return dto;
+  }
+
+  @Override
+  @Transactional
+  public EditMessageResponseDto editMessage(EditMessageRequestDto dto, String username,
+      Long messageId) {
+
+    UserEntity user = userRepository.findByUsername(username)
+        .orElseThrow(UserNotFoundException::new);
+
+    MessageEntity message = messageRepository.findById(messageId)
+        .orElseThrow(MessageNotExistException::new);
+
+    if (!message.getUser().getId().equals(user.getId())) {
+      throw new UnauthorizedMessageEditException();
     }
 
-    @Override
-    public ChatDto makeEnterMessageAndSetSessionAttribute(ChatDto dto, SimpMessageHeaderAccessor headerAccessor) {
-        headerAccessor.getSessionAttributes().put("username", dto.getSender());
-        return dto;
+    message.setMessage(dto.getMessage());
+    messageRepository.save(message);
+
+    return EditMessageResponseDto.builder()
+        .messageId(message.getId())
+        .newMessage(message.getMessage())
+        .chatRoomId(message.getChatRoom().getId())
+        .status(MessageStatus.EDIT)
+        .timestamp(message.getModifiedAt())
+        .build();
+  }
+
+  @Override
+  @Transactional
+  public DeleteMessageResponseDto deleteMessage(DeleteMessageRequestDto dto, String username,
+      Long messageId) {
+
+    UserEntity user = userRepository.findByUsername(username)
+        .orElseThrow(UserNotFoundException::new);
+
+    MessageEntity message = messageRepository.findById(messageId)
+        .orElseThrow(MessageNotExistException::new);
+
+    if (!message.getUser().getId().equals(user.getId())) {
+      throw new UnauthorizedMessageDeletionException();
     }
 
-    @Override
-    @Transactional
-    public EditMessageResponseDto editMessage(EditMessageRequestDto dto, String username, Long messageId) {
+    messageRepository.delete(message);
 
-        UserEntity user = userRepository.findByUsername(username)
-            .orElseThrow(UserNotFoundException::new);
-
-        MessageEntity message = messageRepository.findById(messageId)
-            .orElseThrow(MessageNotExistException::new);
-
-        if (!message.getUser().getId().equals(user.getId())) {
-            throw new UnauthorizedMessageEditException();
-        }
-
-        message.setMessage(dto.getMessage());
-        messageRepository.save(message);
-
-        return EditMessageResponseDto.builder()
-                .messageId(message.getId())
-                .newMessage(message.getMessage())
-                .chatRoomId(message.getChatRoom().getId())
-                .status(MessageStatus.EDIT)
-                .timestamp(message.getModifiedAt())
-                .build();
-    }
-
-    @Override
-    @Transactional
-    public DeleteMessageResponseDto deleteMessage(DeleteMessageRequestDto dto, String username, Long messageId) {
-
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(UserNotFoundException::new);
-
-        MessageEntity message = messageRepository.findById(messageId)
-                .orElseThrow(MessageNotExistException::new);
-
-        if (!message.getUser().getId().equals(user.getId())) {
-            throw new UnauthorizedMessageDeletionException();
-        }
-
-        messageRepository.delete(message);
-
-        return DeleteMessageResponseDto.builder()
-                .id(message.getId())
-                .roomCode(dto.getRoomCode())
-                .status(MessageStatus.DELETE)
-                .build();
-    }
+    return DeleteMessageResponseDto.builder()
+        .id(message.getId())
+        .roomCode(dto.getRoomCode())
+        .status(MessageStatus.DELETE)
+        .build();
+  }
 }

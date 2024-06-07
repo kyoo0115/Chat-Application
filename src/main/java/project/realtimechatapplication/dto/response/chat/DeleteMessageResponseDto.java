@@ -9,6 +9,7 @@ import project.realtimechatapplication.model.type.MessageStatus;
 @Getter
 @Setter
 public class DeleteMessageResponseDto {
+
   private Long id;
   private String roomCode;
   private MessageStatus status;

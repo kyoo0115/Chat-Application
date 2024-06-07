@@ -18,57 +18,60 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class CustomExceptionHandler {
 
-    @ExceptionHandler(AbstractException.class)
-    protected ResponseEntity<ErrorResponse> handleCustomException(AbstractException e) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-            .code(e.getStatusCode())
-            .message(e.getMessage())
-            .build();
+  @ExceptionHandler(AbstractException.class)
+  protected ResponseEntity<ErrorResponse> handleCustomException(AbstractException e) {
+    ErrorResponse errorResponse = ErrorResponse.builder()
+        .code(e.getStatusCode())
+        .message(e.getMessage())
+        .build();
 
-        log.error("Exception: ", e);
-        return new ResponseEntity<>(errorResponse, new HttpHeaders(), HttpStatus.valueOf(e.getStatusCode()));
+    log.error("Exception: ", e);
+    return new ResponseEntity<>(errorResponse, new HttpHeaders(),
+        HttpStatus.valueOf(e.getStatusCode()));
+  }
+
+  @ExceptionHandler(Exception.class)
+  public final ResponseEntity<ErrorResponse> handleAllExceptions(Exception e) {
+    HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+    if (e instanceof AbstractException) {
+      status = HttpStatus.valueOf(((AbstractException) e).getStatusCode());
     }
 
-    @ExceptionHandler(Exception.class)
-    public final ResponseEntity<ErrorResponse> handleAllExceptions(Exception e) {
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+    ErrorResponse errorResponse = ErrorResponse.builder()
+        .code(status.value())
+        .message(e.getMessage())
+        .build();
 
-        if (e instanceof AbstractException) {
-            status = HttpStatus.valueOf(((AbstractException) e).getStatusCode());
-        }
+    log.error("General exception: ", e);
+    return new ResponseEntity<>(errorResponse, new HttpHeaders(), status);
+  }
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-            .code(status.value())
-            .message(e.getMessage())
-            .build();
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<Map<String, List<String>>> handleValidationExceptions(
+      MethodArgumentNotValidException ex) {
+    List<String> errors = ex.getBindingResult()
+        .getFieldErrors()
+        .stream()
+        .map(FieldError::getDefaultMessage)
+        .collect(Collectors.toList());
 
-        log.error("General exception: ", e);
-        return new ResponseEntity<>(errorResponse, new HttpHeaders(), status);
-    }
+    log.error("Validation exception: ", ex);
+    return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+  }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, List<String>>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        List<String> errors = ex.getBindingResult()
-            .getFieldErrors()
-            .stream()
-            .map(FieldError::getDefaultMessage)
-            .collect(Collectors.toList());
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<Map<String, List<String>>> handleHttpMessageNotReadableException(
+      HttpMessageNotReadableException ex) {
+    List<String> errors = List.of("Malformed JSON request");
 
-        log.error("Validation exception: ", ex);
-        return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
-    }
+    log.error("Malformed JSON request: ", ex);
+    return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+  }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, List<String>>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        List<String> errors = List.of("Malformed JSON request");
-
-        log.error("Malformed JSON request: ", ex);
-        return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
-    }
-
-    private Map<String, List<String>> getErrorsMap(List<String> errors) {
-        Map<String, List<String>> errorResponse = new HashMap<>();
-        errorResponse.put("errors", errors);
-        return errorResponse;
-    }
+  private Map<String, List<String>> getErrorsMap(List<String> errors) {
+    Map<String, List<String>> errorResponse = new HashMap<>();
+    errorResponse.put("errors", errors);
+    return errorResponse;
+  }
 }

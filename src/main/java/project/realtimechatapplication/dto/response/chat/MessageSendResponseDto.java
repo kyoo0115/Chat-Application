@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class MessageSendResponseDto {
+
   private Long messageId;
   private String message;
   private String senderId;

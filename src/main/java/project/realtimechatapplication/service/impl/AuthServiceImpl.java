@@ -96,7 +96,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     String password = dto.getPassword();
     String encodedPassword = user.getPassword();
 
-    if(!passwordEncoder.matches(password, encodedPassword)) {
+    if (!passwordEncoder.matches(password, encodedPassword)) {
       throw new WrongPasswordException();
     }
 
@@ -123,11 +123,11 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     VerificationEntity verificationEntity = verificationRepository.findByUsername(username)
         .orElseThrow(UserNotFoundException::new);
 
-    if(!email.equals(verificationEntity.getEmail())) {
+    if (!email.equals(verificationEntity.getEmail())) {
       throw new EmailNotMatchedException();
     }
 
-    if(!verificationNumber.equals(verificationEntity.getVerificationNumber())) {
+    if (!verificationNumber.equals(verificationEntity.getVerificationNumber())) {
       throw new VerificationNumberNotMatchedException();
     }
   }
