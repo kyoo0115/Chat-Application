@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import project.realtimechatapplication.model.OAuth2SuccessHandler;
+import project.realtimechatapplication.handler.OAuth2SuccessHandler;
 import project.realtimechatapplication.service.impl.OAuth2UserServiceImpl;
 
 @Configurable
