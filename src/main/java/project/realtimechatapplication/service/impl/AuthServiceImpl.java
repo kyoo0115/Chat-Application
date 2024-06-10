@@ -14,11 +14,15 @@ import project.realtimechatapplication.dto.request.auth.SendVerificationEmailReq
 import project.realtimechatapplication.dto.request.auth.SignInRequestDto;
 import project.realtimechatapplication.dto.request.auth.SignUpRequestDto;
 import project.realtimechatapplication.dto.request.auth.UsernameCheckRequestDto;
+import project.realtimechatapplication.dto.request.user.EditUserRequestDto;
+import project.realtimechatapplication.dto.request.user.UserDto;
 import project.realtimechatapplication.dto.response.auth.SignInResponseDto;
 import project.realtimechatapplication.entity.UserEntity;
 import project.realtimechatapplication.entity.VerificationEntity;
 import project.realtimechatapplication.exception.impl.EmailAlreadyExistsException;
 import project.realtimechatapplication.exception.impl.EmailNotMatchedException;
+import project.realtimechatapplication.exception.impl.UnauthorizedUserDeleteException;
+import project.realtimechatapplication.exception.impl.UnauthorizedUserEditException;
 import project.realtimechatapplication.exception.impl.UserNotFoundException;
 import project.realtimechatapplication.exception.impl.UsernameAlreadyExistsException;
 import project.realtimechatapplication.exception.impl.VerificationNumberNotMatchedException;
@@ -103,6 +107,41 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     String token = tokenProvider.createToken(user.getUsername());
 
     return new SignInResponseDto(token, user.getUsername());
+  }
+
+  @Override
+  public UserDto getUserById(Long userId) {
+    UserEntity user = userRepository.findById(userId)
+        .orElseThrow(UserNotFoundException::new);
+    return UserDto.from(user);
+  }
+
+  @Override
+  public UserDto editUser(Long userId, EditUserRequestDto dto, String username) {
+
+    UserEntity userEntity = userRepository.findById(userId)
+        .orElseThrow(UserNotFoundException::new);
+
+    if (!userEntity.getUsername().equals(username)) {
+      throw new UnauthorizedUserEditException();
+    }
+
+    userEntity.setName(dto.getName());
+
+    userRepository.save(userEntity);
+    return UserDto.from(userEntity);
+  }
+
+  @Override
+  public void deleteUser(Long userId, String username) {
+    UserEntity userEntity = userRepository.findById(userId)
+        .orElseThrow(UserNotFoundException::new);
+
+    if (!userEntity.getUsername().equals(username)) {
+      throw new UnauthorizedUserDeleteException();
+    }
+
+    userRepository.delete(userEntity);
   }
 
   private void validateUsernameNotExists(String username) {
