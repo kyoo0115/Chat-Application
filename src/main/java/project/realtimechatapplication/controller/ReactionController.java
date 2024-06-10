@@ -18,6 +18,7 @@ import project.realtimechatapplication.dto.request.reaction.AddReactionRequestDt
 import project.realtimechatapplication.dto.request.reaction.EditReactionRequestDto;
 import project.realtimechatapplication.dto.request.reaction.ReactionDto;
 import project.realtimechatapplication.dto.response.CustomResponse;
+import project.realtimechatapplication.service.NotificationService;
 import project.realtimechatapplication.service.ReactionService;
 
 @RestController
@@ -26,6 +27,7 @@ import project.realtimechatapplication.service.ReactionService;
 public class ReactionController {
 
   private final ReactionService reactionService;
+  private final NotificationService notificationService;
 
   @PostMapping
   public ResponseEntity<?> addReaction(
@@ -33,6 +35,7 @@ public class ReactionController {
       @AuthenticationPrincipal final User user
   ) {
     ReactionDto reaction = reactionService.addReaction(dto, user.getUsername());
+    notificationService.createAndSendReactionNotification(dto.getMessageId(), user.getUsername(), reaction.getReaction());
     return CustomResponse.success(reaction);
   }
 

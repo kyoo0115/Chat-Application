@@ -42,6 +42,7 @@ function connect() {
     if (selectedRoomCode) {
       subscribeToRoom(selectedRoomCode);
     }
+    subscribeToNotifications();
   };
 
   stompClient.onWebSocketError = (error) => {
@@ -120,6 +121,25 @@ function subscribeToRoom(roomCode) {
       }
     });
   }
+}
+
+function subscribeToNotifications() {
+  if (stompClient && stompClient.connected) {
+    stompClient.subscribe(`/topic/notifications/${username}`, (notification) => {
+      const parsedNotification = JSON.parse(notification.body);
+      showNotification(parsedNotification.message);
+    });
+  }
+}
+
+function showNotification(message) {
+  const notificationElement = $("<div>").addClass("notification").text(message);
+  $("body").append(notificationElement);
+  setTimeout(() => {
+    notificationElement.fadeOut(() => {
+      notificationElement.remove();
+    });
+  }, 5000);
 }
 
 function logout(event) {
