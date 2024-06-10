@@ -11,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +22,9 @@ import project.realtimechatapplication.model.type.Reaction;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ReactionEntity extends TimeStamped {
   @Id
   @GeneratedValue(strategy = IDENTITY)
@@ -38,4 +42,11 @@ public class ReactionEntity extends TimeStamped {
   @JoinColumn(name = "message_id", nullable = false)
   private MessageEntity message;
 
+  public static ReactionEntity of(MessageEntity message, UserEntity user, Reaction reaction) {
+   return ReactionEntity.builder()
+       .message(message)
+       .user(user)
+       .reaction(reaction)
+       .build();
+  }
 }
