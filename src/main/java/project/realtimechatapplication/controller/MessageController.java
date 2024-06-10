@@ -24,6 +24,7 @@ import project.realtimechatapplication.dto.response.chat.DeleteMessageResponseDt
 import project.realtimechatapplication.dto.response.chat.EditMessageResponseDto;
 import project.realtimechatapplication.dto.response.chat.MessageSendResponseDto;
 import project.realtimechatapplication.service.MessageService;
+import project.realtimechatapplication.service.NotificationService;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +34,7 @@ public class MessageController {
 
   private final MessageService messageService;
   private final SimpMessagingTemplate msgOperation;
+  private final NotificationService notificationService;
 
   @MessageMapping("/chat/enter")
   public void enterChatRoom(
@@ -49,6 +51,7 @@ public class MessageController {
     log.info("sendChatMessage : {}", chatDto.getSender());
     MessageSendResponseDto messageSendResponseDto = messageService.sendMessage(chatDto);
     msgOperation.convertAndSend("/topic/chat/room/" + chatDto.getRoomCode(), messageSendResponseDto);
+    notificationService.createAndSendNotifications(chatDto, messageSendResponseDto);
   }
 
   @PutMapping("/chat/{messageId}")
