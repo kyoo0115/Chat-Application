@@ -18,6 +18,7 @@ import project.realtimechatapplication.dto.request.chat.ChatRoomCreateRequestDto
 import project.realtimechatapplication.dto.request.chat.ChatRoomDto;
 import project.realtimechatapplication.dto.response.CustomResponse;
 import project.realtimechatapplication.service.ChatRoomService;
+import project.realtimechatapplication.service.NotificationService;
 
 @RestController
 @RequestMapping("/api/chatroom")
@@ -26,6 +27,7 @@ import project.realtimechatapplication.service.ChatRoomService;
 public class ChatRoomController {
 
   private final ChatRoomService chatRoomService;
+  private final NotificationService notificationService;
 
   @PostMapping("/create")
   public ResponseEntity<?> createChatRoom(
@@ -50,6 +52,8 @@ public class ChatRoomController {
       @AuthenticationPrincipal final User user,
                @PathVariable final Long memberId) {
     ChatRoomDto chatRoom = chatRoomService.addMemberToChatRoom(dto, user.getUsername(), memberId);
+
+    notificationService.createAndSendAddMemberNotification(dto.getRoomCode(), memberId, user.getUsername());
     return CustomResponse.success(chatRoom);
   }
 
