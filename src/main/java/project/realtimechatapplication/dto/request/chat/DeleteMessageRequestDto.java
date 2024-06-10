@@ -6,9 +6,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ChatRoomAddRequestDto {
+public class DeleteMessageRequestDto {
+
+  @NotBlank(message = "Sender cannot be blank.")
+  private String sender;
 
   @NotBlank(message = "Room code cannot be blank.")
   private String roomCode;
-  private boolean isPrivate;
 }

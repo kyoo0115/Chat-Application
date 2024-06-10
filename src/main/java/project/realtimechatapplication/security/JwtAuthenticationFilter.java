@@ -21,36 +21,37 @@ import project.realtimechatapplication.service.impl.AuthServiceImpl;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final TokenProvider tokenProvider;
-    private final AuthServiceImpl authService;
+  private final TokenProvider tokenProvider;
+  private final AuthServiceImpl authService;
 
-    private static final String BEARER_PREFIX = "Bearer ";
-    private static final String AUTHORIZATION_HEADER = "Authorization";
+  private static final String BEARER_PREFIX = "Bearer ";
+  private static final String AUTHORIZATION_HEADER = "Authorization";
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-        throws ServletException, IOException {
-        String token = parseBearerToken(request);
+  @Override
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+      FilterChain chain)
+      throws ServletException, IOException {
+    String token = parseBearerToken(request);
 
-        if (token != null && tokenProvider.validateToken(token)) {
-            String username = tokenProvider.getUsernameFromToken(token);
+    if (token != null && tokenProvider.validateToken(token)) {
+      String username = tokenProvider.getUsernameFromToken(token);
 
-            UserDetails userDetails = authService.loadUserByUsername(username);
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+      UserDetails userDetails = authService.loadUserByUsername(username);
+      UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+          userDetails, null, userDetails.getAuthorities());
+      authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-
-        chain.doFilter(request, response);
+      SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    private String parseBearerToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(7);
-        }
-        return null;
+    chain.doFilter(request, response);
+  }
+
+  private String parseBearerToken(HttpServletRequest request) {
+    String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+    if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
+      return bearerToken.substring(7);
     }
+    return null;
+  }
 }

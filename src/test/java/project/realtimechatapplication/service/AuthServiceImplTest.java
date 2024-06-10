@@ -19,7 +19,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import project.realtimechatapplication.dto.request.auth.CheckVerificationRequestDto;
 import project.realtimechatapplication.dto.request.auth.SendVerificationEmailRequestDto;
@@ -298,7 +297,7 @@ public class AuthServiceImplTest {
     when(tokenProvider.createToken(anyString())).thenReturn("testToken");
 
     // Act
-    ResponseEntity<SignInResponseDto> response = authService.signIn(requestDto);
+    SignInResponseDto response = authService.signIn(requestDto);
 
     // Assert
     verify(userRepository).findByUsername(requestDto.getUsername());

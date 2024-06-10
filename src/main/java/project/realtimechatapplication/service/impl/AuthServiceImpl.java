@@ -2,7 +2,6 @@ package project.realtimechatapplication.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -89,7 +88,7 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
   }
 
   @Override
-  public ResponseEntity<SignInResponseDto> signIn(SignInRequestDto dto) {
+  public SignInResponseDto signIn(SignInRequestDto dto) {
 
     UserEntity user = userRepository.findByUsername(dto.getUsername())
         .orElseThrow(UserNotFoundException::new);
@@ -97,13 +96,13 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     String password = dto.getPassword();
     String encodedPassword = user.getPassword();
 
-    if(!passwordEncoder.matches(password, encodedPassword)) {
+    if (!passwordEncoder.matches(password, encodedPassword)) {
       throw new WrongPasswordException();
     }
 
     String token = tokenProvider.createToken(user.getUsername());
 
-    return SignInResponseDto.authenticate(token, user.getUsername());
+    return new SignInResponseDto(token, user.getUsername());
   }
 
   private void validateUsernameNotExists(String username) {
@@ -124,11 +123,11 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     VerificationEntity verificationEntity = verificationRepository.findByUsername(username)
         .orElseThrow(UserNotFoundException::new);
 
-    if(!email.equals(verificationEntity.getEmail())) {
+    if (!email.equals(verificationEntity.getEmail())) {
       throw new EmailNotMatchedException();
     }
 
-    if(!verificationNumber.equals(verificationEntity.getVerificationNumber())) {
+    if (!verificationNumber.equals(verificationEntity.getVerificationNumber())) {
       throw new VerificationNumberNotMatchedException();
     }
   }
