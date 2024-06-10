@@ -34,6 +34,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Override
   @Transactional
   public ChatRoomDto createChatRoom(ChatRoomCreateRequestDto dto, String username) {
+
     UserEntity user = userRepository.findByUsername(username)
         .orElseThrow(UserNotFoundException::new);
 
@@ -47,7 +48,9 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
   @Override
   @Transactional
-  public ChatRoomDto addMemberToChatRoom(ChatRoomAddRequestDto dto, String username, Long memberId) {
+  public ChatRoomDto addMemberToChatRoom(ChatRoomAddRequestDto dto, String username,
+      Long memberId) {
+
     ChatRoomMembershipDto membershipDto = memberChatRoomRepository.checkChatRoomAndUserDetails(
             dto.getRoomCode(), username, memberId)
         .orElseThrow(ChatRoomNotFoundException::new);
@@ -67,13 +70,16 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Override
   @Transactional
   public ChatRoomDto deleteChatRoom(Long roomId, String username) {
+
     ChatRoomEntity chatRoom = chatRoomRepository.findById(roomId)
         .orElseThrow(ChatRoomNotFoundException::new);
 
     UserEntity user = userRepository.findByUsername(username)
         .orElseThrow(UserNotFoundException::new);
 
-    validateRoomOwner(chatRoom, user);
+    if (!chatRoom.getOwner().equals(user.getUsername())) {
+      throw new UnauthorizedRoomOwnerException();
+    }
 
     chatRoomRepository.delete(chatRoom);
 
@@ -83,12 +89,16 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Override
   @Transactional
   public ChatRoomDto removeMemberFromChatRoom(Long userId, Long roomId, String username) {
+
     ChatRoomMembershipDto membershipDto = memberChatRoomRepository.checkChatRoomAndUserDetailsById(
             roomId, username, userId)
         .orElseThrow(ChatRoomNotFoundException::new);
 
     validateRoomOwner(membershipDto, username);
-    validateMemberInChatRoom(membershipDto);
+
+    if (!membershipDto.isMemberAlreadyInChatRoom()) {
+      throw new MemberAlreadyInChatroomException();
+    }
 
     UserEntity member = userRepository.findById(userId)
         .orElseThrow(UserNotFoundException::new);
@@ -104,7 +114,9 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
   @Override
   public List<ChatRoomDto> searchChatRoomList(String username) {
+
     List<ChatRoomEntity> chatRooms = memberChatRoomRepository.findChatRoomsByUsername(username);
+
     return chatRooms.stream()
         .map(ChatRoomDto::from)
         .collect(Collectors.toList());
@@ -116,21 +128,9 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
   }
 
-  private void validateRoomOwner(ChatRoomEntity chatRoom, UserEntity user) {
-    if (!chatRoom.getOwner().equals(user.getUsername())) {
-      throw new UnauthorizedRoomOwnerException();
-    }
-  }
-
   private void validateMemberNotInChatRoom(ChatRoomMembershipDto membershipDto) {
     if (membershipDto.isMemberAlreadyInChatRoom()) {
       throw new MemberAlreadyInChatroomException();
-    }
-  }
-
-  private void validateMemberInChatRoom(ChatRoomMembershipDto membershipDto) {
-    if (!membershipDto.isMemberAlreadyInChatRoom()) {
-      throw new MemberNotInChatroomException();
     }
   }
 }
