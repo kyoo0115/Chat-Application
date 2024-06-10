@@ -39,7 +39,6 @@ public class ReactionServiceImpl implements ReactionService {
         .orElseThrow(MessageNotExistException::new);
 
     ReactionEntity reaction = ReactionEntity.of(message, user, dto.getReaction());
-
     reactionRepository.save(reaction);
 
     return ReactionDto.from(reaction);
