@@ -95,10 +95,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         .orElseThrow(ChatRoomNotFoundException::new);
 
     validateRoomOwner(membershipDto, username);
-
-    if (!membershipDto.isMemberAlreadyInChatRoom()) {
-      throw new MemberAlreadyInChatroomException();
-    }
+    validateMemberInChatRoom(membershipDto);
 
     UserEntity member = userRepository.findById(userId)
         .orElseThrow(UserNotFoundException::new);
@@ -131,6 +128,12 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   private void validateMemberNotInChatRoom(ChatRoomMembershipDto membershipDto) {
     if (membershipDto.isMemberAlreadyInChatRoom()) {
       throw new MemberAlreadyInChatroomException();
+    }
+  }
+
+  private void validateMemberInChatRoom(ChatRoomMembershipDto membershipDto) {
+    if (!membershipDto.isMemberAlreadyInChatRoom()) {
+      throw new MemberNotInChatroomException();
     }
   }
 }
