@@ -11,7 +11,6 @@ public class EditMessageResponseDto {
 
   private Long messageId;
   private String newMessage;
-  private String senderId;
   private Long chatRoomId;
   private LocalDateTime timestamp;
   private MessageStatus status;
