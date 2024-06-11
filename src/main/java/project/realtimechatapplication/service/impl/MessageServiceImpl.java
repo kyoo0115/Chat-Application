@@ -1,6 +1,12 @@
 package project.realtimechatapplication.service.impl;
 
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +24,7 @@ import project.realtimechatapplication.exception.impl.MessageNotExistException;
 import project.realtimechatapplication.exception.impl.UnauthorizedMessageDeletionException;
 import project.realtimechatapplication.exception.impl.UnauthorizedMessageEditException;
 import project.realtimechatapplication.exception.impl.UserNotFoundException;
+import project.realtimechatapplication.model.MentionEvent;
 import project.realtimechatapplication.model.type.MessageStatus;
 import project.realtimechatapplication.repository.ChatRoomRepository;
 import project.realtimechatapplication.repository.MessageRepository;
@@ -32,6 +39,10 @@ public class MessageServiceImpl implements MessageService {
   private final MessageRepository messageRepository;
   private final ChatRoomRepository chatRoomRepository;
   private final UserRepository userRepository;
+  private final KafkaTemplate<String, String> kafkaTemplate;
+  private final ApplicationEventPublisher eventPublisher;
+
+  private static final String TOPIC = "chat_messages";
 
   @Override
   @Transactional
@@ -47,12 +58,24 @@ public class MessageServiceImpl implements MessageService {
 
     messageRepository.save(messageEntity);
 
-    return MessageSendResponseDto.builder()
+    List<String> mentions = extractMentions(chatDto.getMessage());
+
+    MessageSendResponseDto responseDto = MessageSendResponseDto.builder()
         .messageId(messageEntity.getId())
         .message(messageEntity.getMessage())
         .chatRoomId(chatRoom.getId())
         .timestamp(messageEntity.getCreatedAt())
         .build();
+
+    kafkaTemplate.send(TOPIC, responseDto.toString());
+
+    if (!mentions.isEmpty()) {
+      MentionEvent mentionEvent = new MentionEvent(chatDto.getRoomCode(), chatDto.getMessage(),
+          chatDto.getSender(), mentions);
+      eventPublisher.publishEvent(mentionEvent);
+    }
+
+    return responseDto;
   }
 
   @Override
@@ -80,13 +103,16 @@ public class MessageServiceImpl implements MessageService {
     message.setMessage(dto.getMessage());
     messageRepository.save(message);
 
-    return EditMessageResponseDto.builder()
+    EditMessageResponseDto responseDto = EditMessageResponseDto.builder()
         .messageId(message.getId())
         .newMessage(message.getMessage())
         .chatRoomId(message.getChatRoom().getId())
         .status(MessageStatus.EDIT)
         .timestamp(message.getModifiedAt())
         .build();
+
+    kafkaTemplate.send(TOPIC, responseDto.toString());
+    return responseDto;
   }
 
   @Override
@@ -106,10 +132,21 @@ public class MessageServiceImpl implements MessageService {
 
     messageRepository.delete(message);
 
-    return DeleteMessageResponseDto.builder()
+    DeleteMessageResponseDto responseDto = DeleteMessageResponseDto.builder()
         .id(message.getId())
         .roomCode(dto.getRoomCode())
         .status(MessageStatus.DELETE)
         .build();
+
+    kafkaTemplate.send(TOPIC, responseDto.toString());
+    return responseDto;
+  }
+
+  private List<String> extractMentions(String message) {
+    Pattern pattern = Pattern.compile("@\\w+");
+    Matcher matcher = pattern.matcher(message);
+    return matcher.results()
+        .map(mr -> mr.group().substring(1)) // Remove '@'
+        .collect(Collectors.toList());
   }
 }
