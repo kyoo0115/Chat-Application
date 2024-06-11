@@ -33,7 +33,7 @@ import project.realtimechatapplication.repository.MemberChatRoomRepository;
 import project.realtimechatapplication.repository.UserRepository;
 import project.realtimechatapplication.service.impl.ChatRoomServiceImpl;
 
-public class ChatRoomServiceTest {
+public class ChatRoomServiceImplTest {
 
   @Mock
   private ChatRoomRepository chatRoomRepository;
@@ -78,7 +78,8 @@ public class ChatRoomServiceTest {
 
     when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
-    assertThrows(UserNotFoundException.class, () -> chatRoomService.createChatRoom(requestDto, "testUser"));
+    assertThrows(UserNotFoundException.class,
+        () -> chatRoomService.createChatRoom(requestDto, "testUser"));
   }
 
   @Test
@@ -120,7 +121,8 @@ public class ChatRoomServiceTest {
     when(memberChatRoomRepository.checkChatRoomAndUserDetails(anyString(), anyString(), anyLong()))
         .thenReturn(Optional.empty());
 
-    assertThrows(ChatRoomNotFoundException.class, () -> chatRoomService.addMemberToChatRoom(requestDto, "ownerUser", 1L));
+    assertThrows(ChatRoomNotFoundException.class,
+        () -> chatRoomService.addMemberToChatRoom(requestDto, "ownerUser", 1L));
   }
 
   @Test
@@ -135,7 +137,8 @@ public class ChatRoomServiceTest {
     when(memberChatRoomRepository.checkChatRoomAndUserDetails(anyString(), anyString(), anyLong()))
         .thenReturn(Optional.of(membershipDto));
 
-    assertThrows(MemberAlreadyInChatroomException.class, () -> chatRoomService.addMemberToChatRoom(requestDto, "ownerUser", 1L));
+    assertThrows(MemberAlreadyInChatroomException.class,
+        () -> chatRoomService.addMemberToChatRoom(requestDto, "ownerUser", 1L));
   }
 
   @Test
@@ -163,7 +166,8 @@ public class ChatRoomServiceTest {
   public void testDeleteChatRoom_Fail_ChatRoomNotFound() {
     when(chatRoomRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-    assertThrows(ChatRoomNotFoundException.class, () -> chatRoomService.deleteChatRoom(1L, "testUser"));
+    assertThrows(ChatRoomNotFoundException.class,
+        () -> chatRoomService.deleteChatRoom(1L, "testUser"));
   }
 
   @Test
@@ -174,7 +178,8 @@ public class ChatRoomServiceTest {
     when(chatRoomRepository.findById(anyLong())).thenReturn(Optional.of(chatRoom));
     when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(new UserEntity()));
 
-    assertThrows(UnauthorizedRoomOwnerException.class, () -> chatRoomService.deleteChatRoom(1L, "testUser"));
+    assertThrows(UnauthorizedRoomOwnerException.class,
+        () -> chatRoomService.deleteChatRoom(1L, "testUser"));
   }
 
   @Test
@@ -187,10 +192,12 @@ public class ChatRoomServiceTest {
     ChatRoomEntity chatRoom = new ChatRoomEntity();
     MemberChatRoomEntity memberChatRoom = new MemberChatRoomEntity();
 
-    when(memberChatRoomRepository.checkChatRoomAndUserDetailsById(anyLong(), anyString(), anyLong()))
+    when(
+        memberChatRoomRepository.checkChatRoomAndUserDetailsById(anyLong(), anyString(), anyLong()))
         .thenReturn(Optional.of(membershipDto));
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(member));
-    when(memberChatRoomRepository.findByUserAndChatRoom(any(UserEntity.class), any(ChatRoomEntity.class)))
+    when(memberChatRoomRepository.findByUserAndChatRoom(any(UserEntity.class),
+        any(ChatRoomEntity.class)))
         .thenReturn(Optional.of(memberChatRoom));
     when(chatRoomRepository.getReferenceById(anyLong())).thenReturn(chatRoom);
 
@@ -205,10 +212,12 @@ public class ChatRoomServiceTest {
 
   @Test
   public void testRemoveMemberFromChatRoom_Fail_ChatRoomNotFound() {
-    when(memberChatRoomRepository.checkChatRoomAndUserDetailsById(anyLong(), anyString(), anyLong()))
+    when(
+        memberChatRoomRepository.checkChatRoomAndUserDetailsById(anyLong(), anyString(), anyLong()))
         .thenReturn(Optional.empty());
 
-    assertThrows(ChatRoomNotFoundException.class, () -> chatRoomService.removeMemberFromChatRoom(1L, 1L, "ownerUser"));
+    assertThrows(ChatRoomNotFoundException.class,
+        () -> chatRoomService.removeMemberFromChatRoom(1L, 1L, "ownerUser"));
   }
 
   @Test
@@ -218,10 +227,12 @@ public class ChatRoomServiceTest {
     membershipDto.setOwnerUsername("ownerUser");
     membershipDto.setMemberAlreadyInChatRoom(false);
 
-    when(memberChatRoomRepository.checkChatRoomAndUserDetailsById(anyLong(), anyString(), anyLong()))
+    when(
+        memberChatRoomRepository.checkChatRoomAndUserDetailsById(anyLong(), anyString(), anyLong()))
         .thenReturn(Optional.of(membershipDto));
 
-    assertThrows(MemberNotInChatroomException.class, () -> chatRoomService.removeMemberFromChatRoom(1L, 1L, "ownerUser"));
+    assertThrows(MemberNotInChatroomException.class,
+        () -> chatRoomService.removeMemberFromChatRoom(1L, 1L, "ownerUser"));
   }
 
   @Test
@@ -229,7 +240,8 @@ public class ChatRoomServiceTest {
     ChatRoomEntity chatRoom = new ChatRoomEntity();
     chatRoom.setName("Test Room");
 
-    when(memberChatRoomRepository.findChatRoomsByUsername(anyString())).thenReturn(Collections.singletonList(chatRoom));
+    when(memberChatRoomRepository.findChatRoomsByUsername(anyString())).thenReturn(
+        Collections.singletonList(chatRoom));
 
     List<ChatRoomDto> chatRooms = chatRoomService.searchChatRoomList("testUser");
 
