@@ -19,7 +19,8 @@ public interface MemberChatRoomRepository extends JpaRepository<MemberChatRoomEn
 
   @Query("SELECT new project.realtimechatapplication.dto.ChatRoomMembershipDto(" +
       "cr.id, u.username, cr.owner, " +
-      "(SELECT COUNT(m.id) FROM MemberChatRoomEntity m WHERE m.user.id = :memberId AND m.chatRoom.id = cr.id) > 0) " +
+      "(SELECT COUNT(m.id) FROM MemberChatRoomEntity m WHERE m.user.id = :memberId AND m.chatRoom.id = cr.id) > 0) "
+      +
       "FROM ChatRoomEntity cr " +
       "JOIN cr.memberChatRooms m " +
       "JOIN m.user u " +
@@ -30,7 +31,8 @@ public interface MemberChatRoomRepository extends JpaRepository<MemberChatRoomEn
 
   @Query("SELECT new project.realtimechatapplication.dto.ChatRoomMembershipDto(" +
       "cr.id, u.username, cr.owner, " +
-      "(SELECT COUNT(m.id) FROM MemberChatRoomEntity m WHERE m.user.id = :memberId AND m.chatRoom.id = cr.id) > 0) " +
+      "(SELECT COUNT(m.id) FROM MemberChatRoomEntity m WHERE m.user.id = :memberId AND m.chatRoom.id = cr.id) > 0) "
+      +
       "FROM ChatRoomEntity cr " +
       "JOIN cr.memberChatRooms m " +
       "JOIN m.user u " +
@@ -39,5 +41,6 @@ public interface MemberChatRoomRepository extends JpaRepository<MemberChatRoomEn
       @Param("username") String username,
       @Param("memberId") Long memberId);
 
-  Optional<MemberChatRoomEntity> findByUserAndChatRoom(UserEntity member, ChatRoomEntity referenceById);
+  Optional<MemberChatRoomEntity> findByUserAndChatRoom(UserEntity member,
+      ChatRoomEntity referenceById);
 }
