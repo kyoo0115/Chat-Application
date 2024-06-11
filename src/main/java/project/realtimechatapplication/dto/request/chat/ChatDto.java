@@ -9,6 +9,7 @@ import project.realtimechatapplication.model.type.MessageType;
 @Getter
 @Setter
 public class ChatDto {
+
   @NotBlank(message = "Invalid room code: empty room code")
   private String roomCode;
 

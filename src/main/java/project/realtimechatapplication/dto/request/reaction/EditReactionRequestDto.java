@@ -11,9 +11,9 @@ import project.realtimechatapplication.model.type.Reaction;
 @NoArgsConstructor
 public class EditReactionRequestDto {
 
-    @NotNull(message = "Reaction ID cannot be null")
-    private Long reactionId;
+  @NotNull(message = "Reaction ID cannot be null")
+  private Long reactionId;
 
-    @NotNull(message = "Reaction type cannot be null")
-    private Reaction reaction;
+  @NotNull(message = "Reaction type cannot be null")
+  private Reaction reaction;
 }
