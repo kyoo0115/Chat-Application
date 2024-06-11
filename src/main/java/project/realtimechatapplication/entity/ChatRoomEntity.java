@@ -23,6 +23,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ChatRoomEntity extends TimeStamped {
+
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private Long id;

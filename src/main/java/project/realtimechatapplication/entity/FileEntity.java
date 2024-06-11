@@ -20,6 +20,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class FileEntity extends TimeStamped {
+
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private Long id;

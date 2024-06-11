@@ -24,6 +24,7 @@ import project.realtimechatapplication.model.type.NotificationType;
 @AllArgsConstructor
 @Builder
 public class NotificationEntity extends TimeStamped {
+
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private Long id;
@@ -40,7 +41,8 @@ public class NotificationEntity extends TimeStamped {
   @JoinColumn(name = "message_id")
   private MessageEntity message;
 
-  public static NotificationEntity notification(NotificationType type, UserEntity user, MessageEntity message) {
+  public static NotificationEntity notification(NotificationType type, UserEntity user,
+      MessageEntity message) {
     return NotificationEntity.builder()
         .type(type)
         .user(user)
