@@ -14,12 +14,14 @@ import project.realtimechatapplication.model.type.NotificationType;
 @AllArgsConstructor
 @Builder
 public class AddMemberNotificationResponseDto {
+
   private Long id;
   private NotificationType type;
   private Long userId;
   private String message;
 
-  public static AddMemberNotificationResponseDto to(NotificationEntity notificationEntity, String chatRoomName) {
+  public static AddMemberNotificationResponseDto to(NotificationEntity notificationEntity,
+      String chatRoomName) {
     return AddMemberNotificationResponseDto.builder()
         .id(notificationEntity.getId())
         .type(NotificationType.INVITATION)

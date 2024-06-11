@@ -14,18 +14,21 @@ import project.realtimechatapplication.model.type.NotificationType;
 @AllArgsConstructor
 @Builder
 public class MessageNotificationResponseDto {
+
   private Long id;
   private NotificationType type;
   private Long userId;
   private Long messageId;
   private String message;
 
-  public static MessageNotificationResponseDto to(NotificationEntity notificationEntity, String chatRoomName, String senderUsername, String messageBody) {
+  public static MessageNotificationResponseDto to(NotificationEntity notificationEntity,
+      String chatRoomName, String senderUsername, String messageBody) {
     return MessageNotificationResponseDto.builder()
         .id(notificationEntity.getId())
         .type(NotificationType.MESSAGE)
         .userId(notificationEntity.getUser().getId())
-        .messageId(notificationEntity.getMessage() != null ? notificationEntity.getMessage().getId() : null)
+        .messageId(notificationEntity.getMessage() != null ? notificationEntity.getMessage().getId()
+            : null)
         .message(senderUsername + " has sent a message in " + chatRoomName + ": " + messageBody)
         .build();
   }
