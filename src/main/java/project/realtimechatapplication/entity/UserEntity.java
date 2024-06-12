@@ -29,6 +29,7 @@ import project.realtimechatapplication.dto.request.auth.SignUpRequestDto;
 @NoArgsConstructor
 @Builder
 public class UserEntity extends TimeStamped {
+
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private Long id;

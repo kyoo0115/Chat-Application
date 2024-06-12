@@ -17,5 +17,6 @@ public interface MessageService {
 
   EditMessageResponseDto editMessage(EditMessageRequestDto dto, String username, Long messageId);
 
-  DeleteMessageResponseDto deleteMessage(DeleteMessageRequestDto dto, String username, Long messageId);
+  DeleteMessageResponseDto deleteMessage(DeleteMessageRequestDto dto, String username,
+      Long messageId);
 }

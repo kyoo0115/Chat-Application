@@ -1,12 +1,10 @@
 package project.realtimechatapplication.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class ChatRoomMembershipDto {
 
   private Long chatRoomId;

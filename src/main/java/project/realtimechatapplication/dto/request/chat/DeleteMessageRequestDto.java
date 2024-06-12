@@ -8,9 +8,6 @@ import lombok.Setter;
 @Setter
 public class DeleteMessageRequestDto {
 
-  @NotBlank(message = "Sender cannot be blank.")
-  private String sender;
-
   @NotBlank(message = "Room code cannot be blank.")
   private String roomCode;
 }

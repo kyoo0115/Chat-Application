@@ -31,6 +31,7 @@ import project.realtimechatapplication.model.type.MessageType;
 @AllArgsConstructor
 @Builder
 public class MessageEntity extends TimeStamped {
+
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private Long id;
@@ -62,7 +63,8 @@ public class MessageEntity extends TimeStamped {
   @OneToMany(mappedBy = "message", cascade = ALL, fetch = LAZY)
   private List<FileEntity> files = new ArrayList<>();
 
-  public static MessageEntity of(MessageType type, String message, ChatRoomEntity chatRoom, UserEntity user) {
+  public static MessageEntity of(MessageType type, String message, ChatRoomEntity chatRoom,
+      UserEntity user) {
     return MessageEntity.builder()
         .type(type)
         .message(message)

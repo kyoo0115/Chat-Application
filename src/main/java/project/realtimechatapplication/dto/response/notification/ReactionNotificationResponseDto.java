@@ -15,13 +15,15 @@ import project.realtimechatapplication.model.type.Reaction;
 @AllArgsConstructor
 @Builder
 public class ReactionNotificationResponseDto {
+
   private Long id;
   private NotificationType type;
   private Long userId;
   private Long messageId;
   private String message;
 
-  public static ReactionNotificationResponseDto to(NotificationEntity notificationEntity, String senderUsername, Reaction reactionType) {
+  public static ReactionNotificationResponseDto to(NotificationEntity notificationEntity,
+      String senderUsername, Reaction reactionType) {
     return ReactionNotificationResponseDto.builder()
         .id(notificationEntity.getId())
         .type(NotificationType.REACTION)

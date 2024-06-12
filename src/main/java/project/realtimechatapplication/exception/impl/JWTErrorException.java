@@ -5,7 +5,6 @@ import project.realtimechatapplication.exception.AbstractException;
 
 public class JWTErrorException extends AbstractException {
 
-
   @Override
   public int getStatusCode() {
     return HttpStatus.UNAUTHORIZED.value();

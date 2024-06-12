@@ -6,8 +6,9 @@ import org.springframework.stereotype.Repository;
 import project.realtimechatapplication.entity.VerificationEntity;
 
 @Repository
-public interface VerificationRepository extends JpaRepository<VerificationEntity, Long>  {
+public interface VerificationRepository extends JpaRepository<VerificationEntity, Long> {
 
   Optional<VerificationEntity> findByUsername(String username);
+
   void deleteByUsername(String username);
 }

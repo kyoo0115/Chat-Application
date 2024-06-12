@@ -12,17 +12,18 @@ import project.realtimechatapplication.model.type.Reaction;
 @AllArgsConstructor
 @Builder
 public class ReactionDto {
-    private Long id;
-    private Reaction reaction;
-    private Long userId;
-    private Long messageId;
 
-    public static ReactionDto from(ReactionEntity reaction) {
-        return ReactionDto.builder()
-            .id(reaction.getId())
-            .reaction(reaction.getReaction())
-            .userId(reaction.getUser().getId())
-            .messageId(reaction.getMessage().getId())
-            .build();
-    }
+  private Long id;
+  private Reaction reaction;
+  private Long userId;
+  private Long messageId;
+
+  public static ReactionDto from(ReactionEntity reaction) {
+    return ReactionDto.builder()
+        .id(reaction.getId())
+        .reaction(reaction.getReaction())
+        .userId(reaction.getUser().getId())
+        .messageId(reaction.getMessage().getId())
+        .build();
+  }
 }

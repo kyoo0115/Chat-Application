@@ -26,6 +26,7 @@ import project.realtimechatapplication.model.type.Reaction;
 @NoArgsConstructor
 @Builder
 public class ReactionEntity extends TimeStamped {
+
   @Id
   @GeneratedValue(strategy = IDENTITY)
   private Long id;
@@ -43,10 +44,10 @@ public class ReactionEntity extends TimeStamped {
   private MessageEntity message;
 
   public static ReactionEntity of(MessageEntity message, UserEntity user, Reaction reaction) {
-   return ReactionEntity.builder()
-       .message(message)
-       .user(user)
-       .reaction(reaction)
-       .build();
+    return ReactionEntity.builder()
+        .message(message)
+        .user(user)
+        .reaction(reaction)
+        .build();
   }
 }

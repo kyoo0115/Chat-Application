@@ -25,7 +25,8 @@ public class VerificationEntity extends TimeStamped {
   private String email;
   private String verificationNumber;
 
-  public static VerificationEntity of(SendVerificationEmailRequestDto dto, String verificationNumber) {
+  public static VerificationEntity of(SendVerificationEmailRequestDto dto,
+      String verificationNumber) {
     return VerificationEntity.builder()
         .username(dto.getUsername())
         .email(dto.getEmail())

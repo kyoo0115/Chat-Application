@@ -2,6 +2,7 @@ package project.realtimechatapplication.service.impl;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import project.realtimechatapplication.entity.UserEntity;
 import project.realtimechatapplication.exception.impl.ChatRoomNotFoundException;
 import project.realtimechatapplication.exception.impl.MessageNotExistException;
 import project.realtimechatapplication.exception.impl.UserNotFoundException;
+import project.realtimechatapplication.model.MentionEvent;
 import project.realtimechatapplication.model.type.NotificationType;
 import project.realtimechatapplication.model.type.Reaction;
 import project.realtimechatapplication.repository.ChatRoomRepository;
@@ -82,5 +84,20 @@ public class NotificationServiceImpl implements NotificationService {
     notificationRepository.save(notification);
     messagingTemplate.convertAndSend("/topic/notifications/" + addingMemberId,
         AddMemberNotificationResponseDto.to(notification, chatRoomName));
+  }
+
+  @EventListener
+  @Transactional
+  public void handleMentionEvent(MentionEvent mentionEvent) {
+    for (String username : mentionEvent.getMentions()) {
+      UserEntity user = userRepository.findByUsername(username)
+          .orElseThrow(UserNotFoundException::new);
+
+      NotificationEntity notification = NotificationEntity.notification(NotificationType.MENTION, user);
+
+      notificationRepository.save(notification);
+
+      messagingTemplate.convertAndSendToUser(user.getUsername(), "/queue/notifications", notification);
+    }
   }
 }
