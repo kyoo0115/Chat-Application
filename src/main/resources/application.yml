@@ -7,7 +7,7 @@ spring:
     hibernate:
       ddl-auto: update
     defer-datasource-initialization: true
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         jdbc:
@@ -36,8 +36,3 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-logging:
-  level:
-    org.springframework.security: DEBUG
-    project.realtimechatapplication: DEBUG
-    org.springframework.web.socket.messaging: TRACE
