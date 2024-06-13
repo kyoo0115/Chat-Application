@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/realtime-chat
-    username: root
-    password: admin
+    url: jdbc:mariadb://realtime-chat.cbyskwqq6s69.ap-northeast-2.rds.amazonaws.com:3306/realtime-chat
+    username: kyoomin1
+    password: kyoominlee1
 
   mail:
     host: smtp.gmail.com
