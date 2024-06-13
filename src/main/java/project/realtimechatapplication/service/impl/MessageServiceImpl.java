@@ -39,7 +39,7 @@ public class MessageServiceImpl implements MessageService {
   private final MessageRepository messageRepository;
   private final ChatRoomRepository chatRoomRepository;
   private final UserRepository userRepository;
-  private final KafkaTemplate<String, String> kafkaTemplate;
+//  private final KafkaTemplate<String, String> kafkaTemplate;
   private final ApplicationEventPublisher eventPublisher;
 
   private static final String TOPIC = "chat_messages";
@@ -67,7 +67,7 @@ public class MessageServiceImpl implements MessageService {
         .timestamp(messageEntity.getCreatedAt())
         .build();
 
-    kafkaTemplate.send(TOPIC, responseDto.toString());
+//    kafkaTemplate.send(TOPIC, responseDto.toString());
 
     if (!mentions.isEmpty()) {
       MentionEvent mentionEvent = new MentionEvent(chatDto.getRoomCode(), chatDto.getMessage(),
@@ -111,7 +111,7 @@ public class MessageServiceImpl implements MessageService {
         .timestamp(message.getModifiedAt())
         .build();
 
-    kafkaTemplate.send(TOPIC, responseDto.toString());
+//    kafkaTemplate.send(TOPIC, responseDto.toString());
     return responseDto;
   }
 
@@ -138,7 +138,7 @@ public class MessageServiceImpl implements MessageService {
         .status(MessageStatus.DELETE)
         .build();
 
-    kafkaTemplate.send(TOPIC, responseDto.toString());
+//    kafkaTemplate.send(TOPIC, responseDto.toString());
     return responseDto;
   }
 
