@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://realtime-chat.cbyskwqq6s69.ap-northeast-2.rds.amazonaws.com:3306/realtime-chat
+    url: jdbc:mariadb://database-1.cbyskwqq6s69.ap-northeast-2.rds.amazonaws.com:3306/chatapp-aws
     username: kyoomin1
     password: kyoominlee1
 
