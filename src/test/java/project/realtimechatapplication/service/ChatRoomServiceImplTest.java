@@ -16,6 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
+import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import project.realtimechatapplication.dto.ChatRoomMembershipDto;
 import project.realtimechatapplication.dto.request.chat.ChatRoomAddRequestDto;
 import project.realtimechatapplication.dto.request.chat.ChatRoomCreateRequestDto;
@@ -28,9 +31,10 @@ import project.realtimechatapplication.exception.impl.MemberAlreadyInChatroomExc
 import project.realtimechatapplication.exception.impl.MemberNotInChatroomException;
 import project.realtimechatapplication.exception.impl.UnauthorizedRoomOwnerException;
 import project.realtimechatapplication.exception.impl.UserNotFoundException;
-import project.realtimechatapplication.repository.ChatRoomRepository;
-import project.realtimechatapplication.repository.MemberChatRoomRepository;
-import project.realtimechatapplication.repository.UserRepository;
+import project.realtimechatapplication.repository.elasticsearch.ElasticsearchChatRoomRepository;
+import project.realtimechatapplication.repository.jpa.ChatRoomRepository;
+import project.realtimechatapplication.repository.jpa.MemberChatRoomRepository;
+import project.realtimechatapplication.repository.jpa.UserRepository;
 import project.realtimechatapplication.service.impl.ChatRoomServiceImpl;
 
 public class ChatRoomServiceImplTest {
@@ -43,6 +47,12 @@ public class ChatRoomServiceImplTest {
 
   @Mock
   private MemberChatRoomRepository memberChatRoomRepository;
+
+  @Mock
+  private ElasticsearchChatRoomRepository elasticsearchChatRoomRepository;
+
+  @Mock
+  private ElasticsearchOperations elasticsearchOperations;
 
   @InjectMocks
   private ChatRoomServiceImpl chatRoomService;
@@ -60,13 +70,18 @@ public class ChatRoomServiceImplTest {
     user.setUsername("testUser");
 
     when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
-    when(chatRoomRepository.save(any(ChatRoomEntity.class))).thenReturn(new ChatRoomEntity());
+    when(chatRoomRepository.save(any(ChatRoomEntity.class))).thenAnswer(invocation -> {
+      ChatRoomEntity chatRoom = invocation.getArgument(0);
+      chatRoom.setId(1L);
+      return chatRoom;
+    });
 
     ChatRoomDto response = chatRoomService.createChatRoom(requestDto, "testUser");
 
     verify(userRepository).findByUsername("testUser");
     verify(chatRoomRepository).save(any(ChatRoomEntity.class));
     verify(memberChatRoomRepository).save(any(MemberChatRoomEntity.class));
+    verify(elasticsearchOperations).index(any(IndexQuery.class), any(IndexCoordinates.class));
 
     assertEquals(requestDto.getRoomName(), response.getRoomName());
   }
