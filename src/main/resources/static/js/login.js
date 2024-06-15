@@ -6,7 +6,7 @@ function login(event) {
   const usernameInput = $("#username").val();
   const password = $("#password").val();
 
-  fetch('http://http://ec2-3-38-102-180.ap-northeast-2.compute.amazonaws.com:8080/auth/sign-in', {
+  fetch('http://ec2-3-38-102-180.ap-northeast-2.compute.amazonaws.com:8080/auth/sign-in', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
