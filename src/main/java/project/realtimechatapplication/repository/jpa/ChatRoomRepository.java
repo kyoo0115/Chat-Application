@@ -1,4 +1,4 @@
-package project.realtimechatapplication.repository;
+package project.realtimechatapplication.repository.jpa;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

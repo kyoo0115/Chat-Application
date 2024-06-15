@@ -6,7 +6,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
+import org.springframework.data.elasticsearch.core.query.IndexQuery;
+import org.springframework.data.elasticsearch.core.query.IndexQueryBuilder;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,16 +22,19 @@ import project.realtimechatapplication.dto.response.chat.MessageSendResponseDto;
 import project.realtimechatapplication.entity.ChatRoomEntity;
 import project.realtimechatapplication.entity.MessageEntity;
 import project.realtimechatapplication.entity.UserEntity;
+import project.realtimechatapplication.entity.elasticsearch.ElasticsearchMessageEntity;
 import project.realtimechatapplication.exception.impl.ChatRoomNotFoundException;
 import project.realtimechatapplication.exception.impl.MessageNotExistException;
 import project.realtimechatapplication.exception.impl.UnauthorizedMessageDeletionException;
 import project.realtimechatapplication.exception.impl.UnauthorizedMessageEditException;
+import project.realtimechatapplication.exception.impl.UnauthorizedRoomOwnerException;
 import project.realtimechatapplication.exception.impl.UserNotFoundException;
 import project.realtimechatapplication.model.MentionEvent;
 import project.realtimechatapplication.model.type.MessageStatus;
-import project.realtimechatapplication.repository.ChatRoomRepository;
-import project.realtimechatapplication.repository.MessageRepository;
-import project.realtimechatapplication.repository.UserRepository;
+import project.realtimechatapplication.repository.jpa.ChatRoomRepository;
+import project.realtimechatapplication.repository.jpa.MessageRepository;
+import project.realtimechatapplication.repository.jpa.UserRepository;
+import project.realtimechatapplication.repository.elasticsearch.ElasticsearchMessageRepository;
 import project.realtimechatapplication.service.MessageService;
 
 @Service
@@ -39,10 +45,12 @@ public class MessageServiceImpl implements MessageService {
   private final MessageRepository messageRepository;
   private final ChatRoomRepository chatRoomRepository;
   private final UserRepository userRepository;
-//  private final KafkaTemplate<String, String> kafkaTemplate;
+  private final ElasticsearchMessageRepository elasticsearchMessageRepository;
+
+  private final ElasticsearchOperations elasticsearchOperations;
   private final ApplicationEventPublisher eventPublisher;
 
-  private static final String TOPIC = "chat_messages";
+  private static final String INDEX_NAME = "chat_messages";
 
   @Override
   @Transactional
@@ -58,6 +66,15 @@ public class MessageServiceImpl implements MessageService {
 
     messageRepository.save(messageEntity);
 
+    ElasticsearchMessageEntity elasticsearchMessageEntity = ElasticsearchMessageEntity.from(messageEntity);
+
+    IndexQuery indexQuery = new IndexQueryBuilder()
+        .withId(elasticsearchMessageEntity.getId().toString())
+        .withObject(elasticsearchMessageEntity)
+        .build();
+
+    elasticsearchOperations.index(indexQuery, IndexCoordinates.of(INDEX_NAME));
+
     List<String> mentions = extractMentions(chatDto.getMessage());
 
     MessageSendResponseDto responseDto = MessageSendResponseDto.builder()
@@ -66,8 +83,6 @@ public class MessageServiceImpl implements MessageService {
         .chatRoomId(chatRoom.getId())
         .timestamp(messageEntity.getCreatedAt())
         .build();
-
-//    kafkaTemplate.send(TOPIC, responseDto.toString());
 
     if (!mentions.isEmpty()) {
       MentionEvent mentionEvent = new MentionEvent(chatDto.getRoomCode(), chatDto.getMessage(),
@@ -103,16 +118,13 @@ public class MessageServiceImpl implements MessageService {
     message.setMessage(dto.getMessage());
     messageRepository.save(message);
 
-    EditMessageResponseDto responseDto = EditMessageResponseDto.builder()
+    return EditMessageResponseDto.builder()
         .messageId(message.getId())
         .newMessage(message.getMessage())
         .chatRoomId(message.getChatRoom().getId())
         .status(MessageStatus.EDIT)
         .timestamp(message.getModifiedAt())
         .build();
-
-//    kafkaTemplate.send(TOPIC, responseDto.toString());
-    return responseDto;
   }
 
   @Override
@@ -132,14 +144,26 @@ public class MessageServiceImpl implements MessageService {
 
     messageRepository.delete(message);
 
-    DeleteMessageResponseDto responseDto = DeleteMessageResponseDto.builder()
+    return DeleteMessageResponseDto.builder()
         .id(message.getId())
         .roomCode(dto.getRoomCode())
         .status(MessageStatus.DELETE)
         .build();
+  }
 
-//    kafkaTemplate.send(TOPIC, responseDto.toString());
-    return responseDto;
+  @Transactional(readOnly = true)
+  public List<ElasticsearchMessageEntity> searchMessages(Long chatRoomId, String query, String username) {
+    UserEntity user = userRepository.findByUsername(username)
+        .orElseThrow(UserNotFoundException::new);
+
+    ChatRoomEntity chatRoom = chatRoomRepository.findById(chatRoomId)
+        .orElseThrow(ChatRoomNotFoundException::new);
+
+    if (!chatRoom.getOwner().equals(user.getUsername())) {
+      throw new UnauthorizedRoomOwnerException();
+    }
+
+    return elasticsearchMessageRepository.findByChatRoomIdAndMessageContaining(chatRoomId, query);
   }
 
   private List<String> extractMentions(String message) {

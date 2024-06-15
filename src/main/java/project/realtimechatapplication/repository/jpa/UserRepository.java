@@ -1,4 +1,4 @@
-package project.realtimechatapplication.repository;
+package project.realtimechatapplication.repository.jpa;
 
 import java.util.List;
 import java.util.Optional;

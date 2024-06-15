@@ -16,7 +16,7 @@ import project.realtimechatapplication.dto.request.auth.KakaoLoginRequestDto;
 import project.realtimechatapplication.dto.response.auth.KakaoLoginResponseDto;
 import project.realtimechatapplication.entity.UserEntity;
 import project.realtimechatapplication.provider.TokenProvider;
-import project.realtimechatapplication.repository.UserRepository;
+import project.realtimechatapplication.repository.jpa.UserRepository;
 
 @Service
 @RequiredArgsConstructor

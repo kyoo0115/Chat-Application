@@ -22,10 +22,10 @@ import project.realtimechatapplication.exception.impl.UserNotFoundException;
 import project.realtimechatapplication.model.MentionEvent;
 import project.realtimechatapplication.model.type.NotificationType;
 import project.realtimechatapplication.model.type.Reaction;
-import project.realtimechatapplication.repository.ChatRoomRepository;
-import project.realtimechatapplication.repository.MessageRepository;
-import project.realtimechatapplication.repository.NotificationRepository;
-import project.realtimechatapplication.repository.UserRepository;
+import project.realtimechatapplication.repository.jpa.ChatRoomRepository;
+import project.realtimechatapplication.repository.jpa.MessageRepository;
+import project.realtimechatapplication.repository.jpa.NotificationRepository;
+import project.realtimechatapplication.repository.jpa.UserRepository;
 import project.realtimechatapplication.service.NotificationService;
 
 @Service
