@@ -16,3 +16,5 @@ spring:
           starttls:
             enable: true
           auth: true
+  elasticsearch:
+    uris: http://elasticsearch:9200
