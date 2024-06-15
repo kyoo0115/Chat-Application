@@ -231,7 +231,10 @@ function addMemberToChatRoom(roomCode) {
   const memberUsername = prompt("Enter username to add to chat room:");
   if (!memberUsername) return;
 
-  fetch('http://ec2-3-38-102-180.ap-northeast-2.compute.amazonaws.com:8080/api/chatroom', {
+  const memberId = prompt("Enter ID of the member to add to chat room:");
+  if (!memberId) return;
+
+  fetch(`http://ec2-3-38-102-180.ap-northeast-2.compute.amazonaws.com:8080/api/chatroom/${memberId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
