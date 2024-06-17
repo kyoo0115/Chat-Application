@@ -16,9 +16,9 @@ import project.realtimechatapplication.exception.impl.ReactionNotFoundException;
 import project.realtimechatapplication.exception.impl.UnauthorizedReactionEditException;
 import project.realtimechatapplication.exception.impl.UnauthorizedReactionRemoveException;
 import project.realtimechatapplication.exception.impl.UserNotFoundException;
-import project.realtimechatapplication.repository.MessageRepository;
-import project.realtimechatapplication.repository.ReactionRepository;
-import project.realtimechatapplication.repository.UserRepository;
+import project.realtimechatapplication.repository.jpa.MessageRepository;
+import project.realtimechatapplication.repository.jpa.ReactionRepository;
+import project.realtimechatapplication.repository.jpa.UserRepository;
 import project.realtimechatapplication.service.ReactionService;
 
 @Service

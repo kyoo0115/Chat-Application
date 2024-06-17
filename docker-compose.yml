@@ -1,17 +1,25 @@
 services:
-  app:
-    image: kyoo0115/realtimechatapplication:latest
-    container_name: app
-    ports:
-      - "8080:8080"
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.4
+    container_name: elasticsearch
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mariadb://database-1.cbyskwqq6s69.ap-northeast-2.rds.amazonaws.com:3306/chatapp-aws
-      SPRING_DATASOURCE_USERNAME: kyoomin1
-      SPRING_DATASOURCE_PASSWORD: kyoominlee1
-
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
     networks:
-      - realtime-chat-network
+      - elasticsearch-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.10.4
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+    networks:
+      - elasticsearch-network
 
 networks:
-  realtime-chat-network:
-    external: true
+  elasticsearch-network:
+    driver: bridge

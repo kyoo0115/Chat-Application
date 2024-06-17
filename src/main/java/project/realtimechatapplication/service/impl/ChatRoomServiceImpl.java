@@ -3,6 +3,10 @@ package project.realtimechatapplication.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
+import org.springframework.data.elasticsearch.core.query.IndexQuery;
+import org.springframework.data.elasticsearch.core.query.IndexQueryBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.realtimechatapplication.dto.ChatRoomMembershipDto;
@@ -12,14 +16,16 @@ import project.realtimechatapplication.dto.request.chat.ChatRoomDto;
 import project.realtimechatapplication.entity.ChatRoomEntity;
 import project.realtimechatapplication.entity.MemberChatRoomEntity;
 import project.realtimechatapplication.entity.UserEntity;
+import project.realtimechatapplication.entity.elasticsearch.ElasticsearchChatRoomEntity;
 import project.realtimechatapplication.exception.impl.ChatRoomNotFoundException;
 import project.realtimechatapplication.exception.impl.MemberAlreadyInChatroomException;
 import project.realtimechatapplication.exception.impl.MemberNotInChatroomException;
 import project.realtimechatapplication.exception.impl.UnauthorizedRoomOwnerException;
 import project.realtimechatapplication.exception.impl.UserNotFoundException;
-import project.realtimechatapplication.repository.ChatRoomRepository;
-import project.realtimechatapplication.repository.MemberChatRoomRepository;
-import project.realtimechatapplication.repository.UserRepository;
+import project.realtimechatapplication.repository.elasticsearch.ElasticsearchChatRoomRepository;
+import project.realtimechatapplication.repository.jpa.ChatRoomRepository;
+import project.realtimechatapplication.repository.jpa.MemberChatRoomRepository;
+import project.realtimechatapplication.repository.jpa.UserRepository;
 import project.realtimechatapplication.service.ChatRoomService;
 
 @Service
@@ -30,6 +36,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   private final ChatRoomRepository chatRoomRepository;
   private final UserRepository userRepository;
   private final MemberChatRoomRepository memberChatRoomRepository;
+  private final ElasticsearchChatRoomRepository elasticsearchChatRoomRepository;
+
+  private final ElasticsearchOperations elasticsearchOperations;
+
+  private static final String INDEX_NAME = "chat_rooms";
 
   @Override
   @Transactional
@@ -42,6 +53,15 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
     chatRoomRepository.save(chatRoom);
     memberChatRoomRepository.save(MemberChatRoomEntity.of(chatRoom, user));
+
+    ElasticsearchChatRoomEntity elasticsearchChatRoom = ElasticsearchChatRoomEntity.from(chatRoom);
+
+    IndexQuery indexQuery = new IndexQueryBuilder()
+        .withId(elasticsearchChatRoom.getId().toString())
+        .withObject(elasticsearchChatRoom)
+        .build();
+
+    elasticsearchOperations.index(indexQuery, IndexCoordinates.of(INDEX_NAME));
 
     return ChatRoomDto.from(chatRoom);
   }
@@ -82,8 +102,14 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     chatRoomRepository.delete(chatRoom);
+    elasticsearchChatRoomRepository.deleteById(roomId);
 
     return ChatRoomDto.from(chatRoom);
+  }
+
+  @Override
+  public List<ElasticsearchChatRoomEntity> searchChatRooms(String query) {
+    return elasticsearchChatRoomRepository.findByNameContaining(query);
   }
 
   @Override
@@ -106,6 +132,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     memberChatRoomRepository.delete(memberChatRoom);
 
     ChatRoomEntity chatRoom = chatRoomRepository.getReferenceById(membershipDto.getChatRoomId());
+
     return ChatRoomDto.from(chatRoom);
   }
 

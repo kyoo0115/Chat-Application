@@ -26,8 +26,8 @@ import project.realtimechatapplication.exception.impl.WrongPasswordException;
 import project.realtimechatapplication.model.VerificationNumberGenerator;
 import project.realtimechatapplication.provider.EmailProvider;
 import project.realtimechatapplication.provider.TokenProvider;
-import project.realtimechatapplication.repository.UserRepository;
-import project.realtimechatapplication.repository.VerificationRepository;
+import project.realtimechatapplication.repository.jpa.UserRepository;
+import project.realtimechatapplication.repository.jpa.VerificationRepository;
 import project.realtimechatapplication.service.AuthService;
 
 @Service

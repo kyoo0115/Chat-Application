@@ -4,6 +4,7 @@ import java.util.List;
 import project.realtimechatapplication.dto.request.chat.ChatRoomAddRequestDto;
 import project.realtimechatapplication.dto.request.chat.ChatRoomCreateRequestDto;
 import project.realtimechatapplication.dto.request.chat.ChatRoomDto;
+import project.realtimechatapplication.entity.elasticsearch.ElasticsearchChatRoomEntity;
 
 public interface ChatRoomService {
 
@@ -16,4 +17,6 @@ public interface ChatRoomService {
   ChatRoomDto removeMemberFromChatRoom(Long userId, Long roomId, String username);
 
   ChatRoomDto deleteChatRoom(Long roomId, String username);
+
+  List<ElasticsearchChatRoomEntity> searchChatRooms(String query);
 }

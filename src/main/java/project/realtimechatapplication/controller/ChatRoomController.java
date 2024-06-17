@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -14,11 +15,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import project.realtimechatapplication.dto.request.chat.ChatRoomAddRequestDto;
 import project.realtimechatapplication.dto.request.chat.ChatRoomCreateRequestDto;
 import project.realtimechatapplication.dto.request.chat.ChatRoomDto;
 import project.realtimechatapplication.dto.response.CustomResponse;
+import project.realtimechatapplication.entity.elasticsearch.ElasticsearchChatRoomEntity;
 import project.realtimechatapplication.service.ChatRoomService;
 import project.realtimechatapplication.service.NotificationService;
 
@@ -26,6 +29,7 @@ import project.realtimechatapplication.service.NotificationService;
 @RequestMapping("/api/chatroom")
 @RequiredArgsConstructor
 @CrossOrigin
+@Slf4j
 @Tag(name = "채팅방 컨트롤러", description = "채팅방 관리를 위한 API들")
 public class ChatRoomController {
 
@@ -76,6 +80,19 @@ public class ChatRoomController {
   public ResponseEntity<?> showChatRoomList(
       @AuthenticationPrincipal final User user) {
     List<ChatRoomDto> chatRooms = chatRoomService.searchChatRoomList(user.getUsername());
+    return CustomResponse.success(chatRooms);
+  }
+
+  @Operation(
+      summary = "채팅방 검색",
+      description = "채팅방을 이름으로 검색할 수 있습니다."
+  )
+  @GetMapping("/search")
+  public ResponseEntity<?> searchChatRooms(
+      @RequestParam String query
+  ) {
+    log.info("searchChatRooms with query : {}", query);
+    List<ElasticsearchChatRoomEntity> chatRooms = chatRoomService.searchChatRooms(query);
     return CustomResponse.success(chatRooms);
   }
 }

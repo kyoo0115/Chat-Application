@@ -13,8 +13,8 @@ import project.realtimechatapplication.exception.impl.ChatRoomNotFoundException;
 import project.realtimechatapplication.exception.impl.UnauthorizedUserDeleteException;
 import project.realtimechatapplication.exception.impl.UnauthorizedUserEditException;
 import project.realtimechatapplication.exception.impl.UserNotFoundException;
-import project.realtimechatapplication.repository.ChatRoomRepository;
-import project.realtimechatapplication.repository.UserRepository;
+import project.realtimechatapplication.repository.jpa.ChatRoomRepository;
+import project.realtimechatapplication.repository.jpa.UserRepository;
 import project.realtimechatapplication.service.UserService;
 
 @Service
