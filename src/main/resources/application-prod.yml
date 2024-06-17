@@ -16,6 +16,8 @@ spring:
           starttls:
             enable: true
           auth: true
-
-  elasticsearch:
-    uris: http://elasticsearch:9200
+  data:
+    elasticsearch:
+      client:
+        reactive:
+          endpoints: http://elasticsearch:9200
