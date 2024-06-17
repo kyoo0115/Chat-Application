@@ -7,8 +7,13 @@ services:
       - xpack.security.enabled=false
     ports:
       - "9200:9200"
-    networks:
-      - elasticsearch-network
+#    networks:
+#      - elasticsearch-network
+#    healthcheck:
+#      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"'"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.10.4
@@ -17,9 +22,32 @@ services:
       - "5601:5601"
     environment:
       ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
-    networks:
-      - elasticsearch-network
+    depends_on:
+       elasticsearch:
+        condition: service_healthy
+#    networks:
+#      - elasticsearch-network
 
-networks:
-  elasticsearch-network:
-    driver: bridge
+#  app:
+#    image: kyoo0115/realtimechatapplication:latest
+#    container_name: app
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:mariadb://database-1.cbyskwqq6s69.ap-northeast-2.rds.amazonaws.com:3306/chatapp-aws
+#      - SPRING_DATASOURCE_USERNAME=kyoomin1
+#      - SPRING_DATASOURCE_PASSWORD=kyoominlee1
+#      - SPRING_MAIL_HOST=smtp.gmail.com
+#      - SPRING_MAIL_PORT=587
+#      - SPRING_MAIL_USERNAME=kyoominmir41@gmail.com
+#      - SPRING_MAIL_PASSWORD=aekhytcsgyiguldg
+#      - SPRING_ELASTICSEARCH_URIS=http://elasticsearch:9200
+#    depends_on:
+#      elasticsearch:
+#        condition: service_healthy
+#    networks:
+#      - elasticsearch-network
+
+#networks:
+#  elasticsearch-network:
+#    driver: bridge
