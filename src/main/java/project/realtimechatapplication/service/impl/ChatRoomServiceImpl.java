@@ -17,7 +17,6 @@ import project.realtimechatapplication.entity.ChatRoomEntity;
 import project.realtimechatapplication.entity.MemberChatRoomEntity;
 import project.realtimechatapplication.entity.UserEntity;
 import project.realtimechatapplication.entity.elasticsearch.ElasticsearchChatRoomEntity;
-import project.realtimechatapplication.entity.elasticsearch.ElasticsearchMessageEntity;
 import project.realtimechatapplication.exception.impl.ChatRoomNotFoundException;
 import project.realtimechatapplication.exception.impl.MemberAlreadyInChatroomException;
 import project.realtimechatapplication.exception.impl.MemberNotInChatroomException;

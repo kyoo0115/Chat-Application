@@ -9,12 +9,13 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: kyoominmir41@gmail.com
-    password: aekh ytcs gyig uldg
+    password: aekhytcsgyiguldg
     properties:
       mail:
         smtp:
           starttls:
             enable: true
           auth: true
+
   elasticsearch:
     uris: http://elasticsearch:9200
