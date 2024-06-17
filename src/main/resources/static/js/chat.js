@@ -24,7 +24,7 @@ function connect() {
   }
 
   stompClient = new StompJs.Client({
-    brokerURL: 'ws://ec2-3-38-102-180.ap-northeast-2.compute.amazonaws.com:8080/ws/chat',
+    brokerURL: 'ws://ec2-15-165-74-203.ap-northeast-2.compute.amazonaws.com:8080/ws/chat',
     connectHeaders: {
       Authorization: `Bearer ${token}`
     },
@@ -157,7 +157,7 @@ function createChatRoom(event) {
 
   console.log("Creating chat room with token:", token);
 
-  fetch('http://ec2-3-38-102-180.ap-northeast-2.compute.amazonaws.com:8080/api/chatroom/create', {
+  fetch('http://ec2-15-165-74-203.ap-northeast-2.compute.amazonaws.com:8080/api/chatroom/create', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -188,7 +188,7 @@ function loadChatRooms() {
     return;
   }
 
-  fetch('http://ec2-3-38-102-180.ap-northeast-2.compute.amazonaws.com:8080/api/chatroom/room', {
+  fetch('http://ec2-15-165-74-203.ap-northeast-2.compute.amazonaws.com:8080/api/chatroom/room', {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`
@@ -234,7 +234,7 @@ function addMemberToChatRoom(roomCode) {
   const memberId = prompt("Enter ID of the member to add to chat room:");
   if (!memberId) return;
 
-  fetch(`http://ec2-3-38-102-180.ap-northeast-2.compute.amazonaws.com:8080/api/chatroom/${memberId}`, {
+  fetch(`http://ec2-15-165-74-203.ap-northeast-2.compute.amazonaws.com:8080/api/chatroom/${memberId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
